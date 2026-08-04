@@ -4,6 +4,9 @@
 <meta charset="UTF-8"><!-- v20260531151154 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a1628">
 <title>P'tit Bouchon — Guest Guide</title>
@@ -788,6 +791,61 @@ function saveAndMark() { saveData(); }
 function getCat(id) { return D.categories.find(c => c.id === id); }
 function uid() { return Math.random().toString(36).slice(2, 8); }
 
+// ── ADMIN PHOTO UPLOAD (via admin-upload-photo edge function; falls back to manual URL field) ──
+// Reads the file as base64, strips the data: prefix, POSTs it, then calls onDone(url, error).
+async function uploadAdminPhoto(file, onDone) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async function (e) {
+    try {
+      const dataUrl = e.target.result || '';
+      const commaIdx = dataUrl.indexOf(',');
+      const contentBase64 = commaIdx >= 0 ? dataUrl.slice(commaIdx + 1) : dataUrl;
+      const contentType = file.type || 'image/jpeg';
+      const res = await fetch(SUPABASE_URL + '/functions/v1/admin-upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+        body: JSON.stringify({ password: adminPasswordMemory, filename: file.name, contentBase64, contentType })
+      });
+      let json = {};
+      try { json = await res.json(); } catch (e2) {}
+      if (res.ok && json && json.ok && json.url) {
+        onDone(json.url, null);
+      } else {
+        onDone(null, (json && json.error) || 'Échec de l\'envoi');
+      }
+    } catch (err) {
+      onDone(null, 'Erreur réseau lors de l\'envoi');
+    }
+  };
+  reader.onerror = function () { onDone(null, 'Erreur de lecture du fichier'); };
+  reader.readAsDataURL(file);
+}
+// Wired to a hidden <input type=file>'s onchange. `setter(url)` is an inline callback supplied by each field.
+function adminPhotoChange(inputEl, statusId, setter) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById(statusId);
+  if (statusEl) { statusEl.style.color = 'var(--muted)'; statusEl.textContent = '⏳ Envoi en cours...'; }
+  uploadAdminPhoto(file, function (url, err) {
+    if (url) {
+      if (statusEl) { statusEl.style.color = '#2e7d52'; statusEl.textContent = '✅ Photo envoyée'; }
+      setter(url);
+    } else {
+      if (statusEl) { statusEl.style.color = '#e53935'; statusEl.textContent = '❌ ' + (err || 'Échec de l\'envoi'); }
+    }
+  });
+}
+// Returns the reusable "📤 Uploader" markup (hidden file input + button + status line) for a photo field.
+// `fieldUid` must be unique per rendered field; `setterJs` is raw JS run with `url` in scope.
+function photoUploadBlock(fieldUid, setterJs) {
+  return `<div style="display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap">
+    <input type="file" accept="image/*" id="upf-${fieldUid}" style="display:none" onchange="adminPhotoChange(this,'ups-${fieldUid}',function(url){${setterJs}})">
+    <button type="button" class="btn-up" style="padding:6px 12px;border-radius:50px" onclick="document.getElementById('upf-${fieldUid}').click()">📤 Uploader une photo</button>
+    <span id="ups-${fieldUid}" style="font-size:11px;color:var(--muted)"></span>
+  </div>`;
+}
+
 // ── LANGUAGE ──
 let LANG = (function(){ try { return localStorage.getItem('ptb_lang') || ''; } catch(e) { return ''; } })();
 function initLang(l) {
@@ -840,6 +898,25 @@ function trackVisit(id) {
   D.stats = D.stats || { visits: {}, total: 0 };
   D.stats.visits[id] = (D.stats.visits[id] || 0) + 1;
   D.stats.total = (D.stats.total || 0) + 1;
+  logVisitEvent(id);
+}
+// Fire-and-forget insert into visit_events — never blocks navigation, never throws.
+function logVisitEvent(id) {
+  (async () => {
+    try {
+      const sb = await getSupabaseClient();
+      await sb.from('visit_events').insert({ event_type: 'screen_view', target_id: id, device_id: DEVICE_ID });
+    } catch (e) { /* best-effort analytics only */ }
+  })();
+}
+// Fire-and-forget item-level engagement tracking (Google Maps / phone / "Lire plus" clicks on place cards).
+function logItemClick(itemId, itemLabel, categoryId) {
+  (async () => {
+    try {
+      const sb = await getSupabaseClient();
+      await sb.from('visit_events').insert({ event_type: 'item_click', target_id: itemId, target_label: itemLabel || '', category_id: categoryId || '', device_id: DEVICE_ID });
+    } catch (e) { /* best-effort analytics only */ }
+  })();
 }
 
 // ── HERO SLIDER ──
@@ -907,7 +984,7 @@ function setRating(id, stars) {
 }
 
 // ── PLACE CARD ──
-function pcard(item, icon) {
+function pcard(item, icon, categoryId) {
   const id = item.id || uid();
   const name = T(item.nameFr, item.nameEn) || '';
   const desc = T(item.descFr, item.descEn) || '';
@@ -915,6 +992,8 @@ function pcard(item, icon) {
   const rating = D.ratings[id] || 0;
   const safeName = name.replace(/'/g, "\\'").replace(/"/g, '');
   const safeImg = (item.image || '').replace(/'/g, "\\'");
+  const safeCat = (categoryId || '').replace(/'/g, "\\'");
+  const clickTrack = `logItemClick('${id}','${safeName}','${safeCat}')`;
   const tags = [
     item.distance ? `<span class="tag">📍 ${item.distance}</span>` : '',
     item.priceLevel ? `<span class="tag">💰 ${item.priceLevel.substring(0, 30)}</span>` : '',
@@ -930,11 +1009,11 @@ function pcard(item, icon) {
       </div>
       ${tags ? `<div class="pcard-tags">${tags}</div>` : ''}
       ${desc ? `<div class="pcard-desc" id="${pid}">${desc}</div>` : ''}
-      ${desc.length > 130 ? `<button class="btn-more" onclick="toggleDesc('${pid}',this)">${T('Lire plus ▾', 'Read more ▾')}</button>` : ''}
+      ${desc.length > 130 ? `<button class="btn-more" onclick="toggleDesc('${pid}',this);${clickTrack}">${T('Lire plus ▾', 'Read more ▾')}</button>` : ''}
     </div>
     <div class="pcard-foot">
-      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map">🗺️ ${T('Google Maps', 'Google Maps')}</a>` : ''}
-      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel">📞 ${item.phone}</a>` : ''}
+      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map" onclick="${clickTrack}">🗺️ ${T('Google Maps', 'Google Maps')}</a>` : ''}
+      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel" onclick="${clickTrack}">📞 ${item.phone}</a>` : ''}
       ${item.videoLink ? `<a href="${item.videoLink}" target="_blank" class="btn-vid">▶ Vidéo</a>` : ''}
     </div>
     <div class="pcard-rating">
@@ -949,9 +1028,13 @@ function toggleDesc(id, btn) {
 }
 
 // ── RENTAL CARD ──
-function rentalCard(item) {
+function rentalCard(item, categoryId) {
+  const id = item.id || uid();
   const name = T(item.nameFr, item.nameEn) || '';
   const desc = T(item.descFr, item.descEn) || '';
+  const safeName = name.replace(/'/g, "\\'").replace(/"/g, '');
+  const safeCat = (categoryId || '').replace(/'/g, "\\'");
+  const clickTrack = `logItemClick('${id}','${safeName}','${safeCat}')`;
   return `<div class="rental-card">
     ${item.image ? `<img class="rental-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async">` : `<div class="rental-img-ph">🚗</div>`}
     <div class="rental-body">
@@ -960,8 +1043,8 @@ function rentalCard(item) {
       <div class="rental-desc" style="margin-top:6px">${desc}</div>
     </div>
     <div class="rental-foot">
-      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel">📞 ${item.phone}</a>` : ''}
-      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map">🗺️ ${T('Voir', 'Map')}</a>` : ''}
+      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel" onclick="${clickTrack}">📞 ${item.phone}</a>` : ''}
+      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map" onclick="${clickTrack}">🗺️ ${T('Voir', 'Map')}</a>` : ''}
       ${item.videoLink ? `<a href="${item.videoLink}" target="_blank" class="btn-vid">▶ Vidéo</a>` : ''}
     </div>
   </div>`;
@@ -993,7 +1076,7 @@ function renderAll() {
   ];
   catMap.forEach(([cid, eid, icon]) => {
     const el = document.getElementById(eid); const cat = getCat(cid);
-    if (el && cat) el.innerHTML = cat.items.map(it => pcard(it, icon)).join('');
+    if (el && cat) el.innerHTML = cat.items.map(it => pcard(it, icon, cid)).join('');
   });
   renderVideos();
   renderItins();
@@ -1207,8 +1290,8 @@ function renderTaxe() {
 function renderTaxiRental() {
   const tl = document.getElementById('taxi-list');
   const rl = document.getElementById('rental-list');
-  if (tl) tl.innerHTML = (D.taxi || []).map(t => rentalCard(t)).join('');
-  if (rl) rl.innerHTML = (D.rentals || []).map(r => rentalCard(r)).join('');
+  if (tl) tl.innerHTML = (D.taxi || []).map(t => rentalCard(t, 'taxi')).join('');
+  if (rl) rl.innerHTML = (D.rentals || []).map(r => rentalCard(r, 'rentals')).join('');
 }
 function renderVideos() {
   const vids = D.videos || [];
@@ -1382,12 +1465,15 @@ function aSettings(el) {
     <div class="a-field"><label>Photo de fond (URL) — laisser vide pour fond uni</label>
       <input value="${D.settings.langBgUrl||''}" placeholder="https://..." onchange="D.settings.langBgUrl=this.value;saveData();applyLangScreen()">
       ${D.settings.langBgUrl?'<img src="'+D.settings.langBgUrl+'" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px">':''}
+      ${photoUploadBlock('lang-bg', `D.settings.langBgUrl=url;saveData();applyLangScreen();aTab(0);`)}
     </div>
     <div class="a-field"><label>Image bouton Français (URL) — optionnel</label>
       <input value="${D.settings.langBtnFrUrl||''}" placeholder="https://..." onchange="D.settings.langBtnFrUrl=this.value;saveData();applyLangScreen()">
+      ${photoUploadBlock('lang-fr', `D.settings.langBtnFrUrl=url;saveData();applyLangScreen();aTab(0);`)}
     </div>
     <div class="a-field"><label>Image bouton English (URL) — optionnel</label>
       <input value="${D.settings.langBtnEnUrl||''}" placeholder="https://..." onchange="D.settings.langBtnEnUrl=this.value;saveData();applyLangScreen()">
+      ${photoUploadBlock('lang-en', `D.settings.langBtnEnUrl=url;saveData();applyLangScreen();aTab(0);`)}
     </div>
   </div>
   <div class="a-sec"><h3>🔐 Sécurité</h3>
@@ -1480,6 +1566,7 @@ function renderSliderHTML() {
       <div style="flex:1;min-width:0">
         <input value="${(g.caption || '').replace(/"/g, '"')}" placeholder="Légende..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font-body)" onchange="D.sliderImages[${i}].caption=this.value;saveData()">
         <input value="${(g.url || '').replace(/"/g, '"')}" placeholder="URL photo..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--font-body);margin-top:4px" onchange="D.sliderImages[${i}].url=this.value;saveData()">
+        ${photoUploadBlock('sld-'+i, `D.sliderImages[${i}].url=url;saveData();aTab(2);`)}
       </div>
       <div class="order-btns">
         <button class="btn-up" onclick="moveSlide(${i},-1)">↑</button>
@@ -1612,7 +1699,8 @@ function catItem(item, i, ci) {
       <div class="a-field"><label>Lien Google Maps</label><input value="${item.mapLink||''}" onchange="D.categories[${ci}].items[${i}].mapLink=this.value;saveData()"></div>
       <div class="a-field"><label>▶ Lien Vidéo (YouTube, etc.)</label><input value="${item.videoLink||''}" placeholder="https://youtube.com/..." onchange="D.categories[${ci}].items[${i}].videoLink=this.value;saveData()"></div>
       <div class="a-field"><label>URL Photo</label><input value="${item.image||''}" onchange="D.categories[${ci}].items[${i}].image=this.value;saveData()">
-        ${item.image ? `<img src="${item.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}</div>
+        ${item.image ? `<img src="${item.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}
+        ${photoUploadBlock('cat-'+ci+'-'+i, `D.categories[${ci}].items[${i}].image=url;saveData();aTab(curTab);`)}</div>
       <button class="btn-del" onclick="D.categories[${ci}].items.splice(${i},1);saveData();aTab(curTab)">🗑️ Supprimer ce lieu</button>
     </div></div>`;
 }
@@ -1645,7 +1733,8 @@ function aTaxiRental(el) {
           <div class="a-field"><label>Lien Maps</label><input value="${item.mapLink||''}" onchange="D['${key}'][${i}].mapLink=this.value;saveData()"></div>
           <div class="a-field"><label>▶ Lien Vidéo</label><input value="${item.videoLink||''}" onchange="D['${key}'][${i}].videoLink=this.value;saveData()"></div>
           <div class="a-field"><label>URL Photo</label><input value="${item.image||''}" onchange="D['${key}'][${i}].image=this.value;saveData()">
-            ${item.image ? `<img src="${item.image}" style="width:100%;height:70px;object-fit:cover;border-radius:8px;margin-top:4px">` : ''}</div>
+            ${item.image ? `<img src="${item.image}" style="width:100%;height:70px;object-fit:cover;border-radius:8px;margin-top:4px">` : ''}
+            ${photoUploadBlock(key+'-'+i, `D['${key}'][${i}].image=url;saveData();aTab(16);`)}</div>
           <button class="btn-del" onclick="D['${key}'].splice(${i},1);saveData();aTab(16)">🗑️ Supprimer</button>
         </div></div>`).join('')}
       <button class="btn-add" onclick="D['${key}'].push({id:uid(),nameFr:'Nouveau',nameEn:'New',descFr:'',descEn:'',phone:'',price:'',mapLink:'',image:'',videoLink:''});saveData();aTab(16)">+ Ajouter</button>
@@ -1740,7 +1829,8 @@ function aGallery(el) {
       <div class="coll-body">
         <div class="a-field"><label>Légende</label><input value="${(g.caption||'').replace(/"/g,'"')}" onchange="D.gallery[${i}].caption=this.value;saveData()"></div>
         <div class="a-field"><label>URL Photo</label><input value="${g.url||''}" onchange="D.gallery[${i}].url=this.value;D.sliderImages[${i}]={url:this.value,caption:D.gallery[${i}].caption};saveData()">
-          ${g.url ? `<img src="${g.url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}</div>
+          ${g.url ? `<img src="${g.url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}
+          ${photoUploadBlock('gal-'+i, `D.gallery[${i}].url=url;D.sliderImages[${i}]={url:url,caption:D.gallery[${i}].caption};saveData();aTab(20);`)}</div>
         <button class="btn-del" onclick="D.gallery.splice(${i},1);D.sliderImages.splice(${i},1);saveData();aTab(20)">🗑️ Supprimer</button>
       </div></div>`).join('')}
     <button class="btn-add" onclick="const g={id:uid(),url:'',caption:'Nouvelle photo'};D.gallery.push(g);D.sliderImages.push({url:'',caption:''});saveData();aTab(20)">+ Ajouter une photo</button>
@@ -1748,24 +1838,69 @@ function aGallery(el) {
   <button class="btn-save" onclick="saveData();renderAll();buildSlider();showSaved(this)">💾 Enregistrer & Appliquer</button>`;
 }
 
-function aStats(el) {
-  const st = D.stats || { visits: {}, total: 0 };
-  const labels = { 's-home':'Accueil','s-checkin':'Check-in','s-restaurants':'Restaurants','s-plages':'Plages','s-activites':'Activités','s-voir':'À Voir','s-supermarches':'Supermarchés','s-urgences':'Urgences','s-taxi':'Taxi & Location','s-favs':'Favoris','s-regles':'Règles','s-faq':'FAQ','s-taxe':'Taxe Séjour','s-boulangeries':'Boulangeries','s-atm':'ATM','s-essence':'Stations' };
-  const sorted = Object.entries(st.visits || {}).sort((a, b) => b[1] - a[1]);
-  const maxV = sorted.length ? sorted[0][1] : 1;
-  el.innerHTML = `<div class="a-sec"><h3>📊 Statistiques de Visite</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div style="background:#f0f7ff;border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--accent)">${st.total || 0}</div><div style="font-size:11px;color:var(--muted)">Visites totales</div></div>
-      <div style="background:#f0f7ff;border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--accent)">${sorted.length}</div><div style="font-size:11px;color:var(--muted)">Pages visitées</div></div>
+const SCREEN_LABELS = {
+  's-home':'Accueil','s-checkin':'Check-in','s-restaurants':'Restaurants','s-plages':'Plages','s-activites':'Activités',
+  's-voir':'À Voir','s-supermarches':'Supermarchés','s-urgences':'Urgences','s-taxi':'Taxi & Location','s-favs':'Favoris',
+  's-regles':'Règles','s-faq':'FAQ','s-taxe':'Taxe de séjour','s-boulangeries':'Boulangeries','s-atm':'ATM','s-essence':'Stations'
+};
+let statsData = null;
+let statsRange = 'allTime';
+async function aStats(el) {
+  el.innerHTML = `<div class="a-sec"><h3>📊 Statistiques de Visite</h3><p style="font-size:13px;color:var(--muted);text-align:center;padding:24px">⏳ Chargement des statistiques...</p></div>`;
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/admin-stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ password: adminPasswordMemory })
+    });
+    let json = {};
+    try { json = await res.json(); } catch (e) {}
+    if (res.ok && json && !json.error) {
+      statsData = json;
+      renderStats(el);
+    } else {
+      el.innerHTML = `<div class="a-sec"><h3>📊 Statistiques de Visite</h3>
+        <p style="font-size:13px;color:#e53935;text-align:center;padding:20px">❌ Impossible de charger les statistiques${json && json.error ? (' : ' + json.error) : ''}.</p>
+        <button class="btn-save" onclick="aTab(21)">🔄 Réessayer</button>
+      </div>`;
+    }
+  } catch (e) {
+    el.innerHTML = `<div class="a-sec"><h3>📊 Statistiques de Visite</h3>
+      <p style="font-size:13px;color:#e53935;text-align:center;padding:20px">❌ Erreur réseau lors du chargement des statistiques.</p>
+      <button class="btn-save" onclick="aTab(21)">🔄 Réessayer</button>
+    </div>`;
+  }
+}
+function renderStats(el) {
+  if (!statsData) return;
+  const d = statsData[statsRange] || { topScreens: [], topItems: [], total: 0 };
+  const topScreens = d.topScreens || [];
+  const topItems = d.topItems || [];
+  const maxScreen = topScreens.length ? topScreens[0].count : 1;
+  const maxItem = topItems.length ? topItems[0].count : 1;
+  const pill = (key, label) => `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;background:${statsRange===key?'var(--accent)':'transparent'};color:${statsRange===key?'#fff':'var(--muted)'}" onclick="statsRange='${key}';renderStats(document.getElementById('admin-content'))">${label}</div>`;
+  el.innerHTML = `<div class="a-sec">
+    <h3>📊 Statistiques de Visite</h3>
+    <div style="display:flex;gap:4px;margin-bottom:14px;background:#f0f4f8;border-radius:10px;padding:4px">
+      ${pill('allTime','Tout')}${pill('last30','30 jours')}${pill('last7','7 jours')}
     </div>
-    <h4 style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--muted)">PAGES LES PLUS VISITÉES</h4>
-    ${sorted.map(([id, count]) => `
-      <div style="padding:0 0 10px">
-        <div style="font-size:12px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;margin-bottom:4px"><span>${labels[id] || id}</span><span>${count}</span></div>
-        <div style="height:8px;background:var(--border);border-radius:50px;overflow:hidden"><div style="height:100%;background:var(--accent);border-radius:50px;width:${Math.round(count / maxV * 100)}%"></div></div>
-      </div>`).join('')}
-    ${!sorted.length ? `<p style="font-size:13px;color:var(--muted);text-align:center;padding:20px">Aucune visite enregistrée pour l'instant.</p>` : ''}
-    <button class="btn-del" style="width:100%;margin-top:10px" onclick="if(confirm('Réinitialiser les statistiques ?')){D.stats={visits:{},total:0};saveData();aTab(21)}">🗑️ Réinitialiser les statistiques</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      <div style="background:#f0f7ff;border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--accent)">${d.total || 0}</div><div style="font-size:11px;color:var(--muted)">Événements</div></div>
+      <div style="background:#f0f7ff;border-radius:12px;padding:14px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--accent)">${statsData.uniqueDevices || 0}</div><div style="font-size:11px;color:var(--muted)">Visiteurs uniques</div></div>
+    </div>
+    <h4 style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--muted)">SECTIONS LES PLUS VISITÉES</h4>
+    ${topScreens.length ? topScreens.map(s => `
+      <div class="stat-bar-wrap" style="padding:0 0 10px">
+        <div class="stat-label"><span>${SCREEN_LABELS[s.id] || s.id}</span><span>${s.count}</span></div>
+        <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(s.count / maxScreen * 100)}%"></div></div>
+      </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
+    <h4 style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--muted)">LIEUX LES PLUS CONSULTÉS</h4>
+    ${topItems.length ? topItems.map(it => `
+      <div class="stat-bar-wrap" style="padding:0 0 10px">
+        <div class="stat-label"><span>${(it.label || it.id || '')}${it.category ? ` <span style="color:var(--muted);font-weight:400">(${it.category})</span>` : ''}</span><span>${it.count}</span></div>
+        <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(it.count / maxItem * 100)}%"></div></div>
+      </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
+    <button class="btn-save" style="margin-top:10px" onclick="aTab(21)">🔄 Rafraîchir</button>
   </div>`;
 }
 
