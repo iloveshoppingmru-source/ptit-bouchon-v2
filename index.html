@@ -12,10 +12,10 @@
 <title>P'tit Bouchon — Guest Guide</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#e8eef5}
+html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
 :root{--blue:#1b6ca8;--dark:#0a1628;--bg:#f4f8fd;--card:#fff;--text:#0d1f35;--muted:#6b8caa;--border:#dde8f5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--font-head:'Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
-#app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:#e0e8f0}
+#app-shell{position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;display:flex;justify-content:center;background:#e0e8f0}
 
 @media(min-width:600px){
   #admin-app .admin-scroll{padding:20px 24px}
@@ -87,10 +87,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
 .spb{padding-bottom:calc(84px + var(--safe))}
-#lang-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#0a1628}
-.ls-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;display:none}
+#lang-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#0a1628}
+.ls-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:0;display:none}
 .ls-bg img{width:100%;height:100%;object-fit:cover;display:block}
-.ls-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;background:linear-gradient(to bottom,rgba(10,22,40,.5) 0%,rgba(10,22,40,.75) 50%,rgba(10,22,40,.95) 100%);display:none}
+.ls-overlay{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:1;background:linear-gradient(to bottom,rgba(10,22,40,.5) 0%,rgba(10,22,40,.75) 50%,rgba(10,22,40,.95) 100%);display:none}
 .ls-content{position:relative;z-index:2;width:100%;padding:0 28px;display:flex;flex-direction:column;align-items:center;gap:0}
 .ls-logo{font-family:var(--font-head,'Playfair Display',serif);color:#fff;font-size:38px;font-weight:700;text-align:center;line-height:1.15;margin-bottom:6px;text-shadow:0 2px 20px rgba(0,0,0,.4)}
 .ls-sub{color:rgba(255,255,255,.65);font-size:13px;text-align:center;letter-spacing:.5px;margin-bottom:22px}
@@ -394,6 +394,23 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 <body>
 
 
+<script>
+(function(){
+  function setAppHeight(){
+    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    var el = document.getElementById('app-shell');
+    if(el) el.style.height = h + 'px';
+  }
+  document.addEventListener('DOMContentLoaded', setAppHeight);
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 150); });
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setAppHeight);
+    window.visualViewport.addEventListener('scroll', setAppHeight);
+  }
+  setAppHeight();
+})();
+</script>
 <div id="app-shell"><div id="app">
 <div class="screen active" id="s-home">
   <div class="hero">
