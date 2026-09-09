@@ -15,7 +15,7 @@
 html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
 :root{--blue:#1b6ca8;--dark:#0a1628;--bg:#f4f8fd;--card:#fff;--text:#0d1f35;--muted:#6b8caa;--border:#dde8f5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--font-head:'Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
-#app-shell{position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;display:flex;justify-content:center;background:#e0e8f0}
+#app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:#e0e8f0}
 
 @media(min-width:600px){
   #admin-app .admin-scroll{padding:20px 24px}
@@ -395,21 +395,11 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 
 
 <script>
-(function(){
-  function setAppHeight(){
-    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    var el = document.getElementById('app-shell');
-    if(el) el.style.height = h + 'px';
-  }
-  document.addEventListener('DOMContentLoaded', setAppHeight);
-  window.addEventListener('resize', setAppHeight);
-  window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 150); });
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', setAppHeight);
-    window.visualViewport.addEventListener('scroll', setAppHeight);
-  }
-  setAppHeight();
-})();
+// #app-shell uses position:fixed + inset:0, which always exactly matches the
+// live visible viewport on its own — no JS height sync needed (a prior version
+// set an inline pixel height from window.innerHeight/visualViewport.height,
+// which could freeze at a stale value on some devices — e.g. iPhone 16 Pro Max —
+// leaving a gap below the bottom nav once Safari's chrome settled).
 </script>
 <div id="app-shell"><div id="app">
 <div class="screen active" id="s-home">
@@ -465,7 +455,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     <div style="height:10px"></div>
   </div>
   <div class="scroll spb" id="tab-2" style="display:none">
-    <img class="villa-main-img" id="villa-main" src="https://a0.muscache.com/im/pictures/miso/Hosting-54153972/original/ec3d996c-b4c4-4eec-801e-e74527da4d99.jpeg" alt="" onclick="openLb(this.src)">
+    <img class="villa-main-img" id="villa-main" src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976357526_a9853f21_hardcoded-A-cstxjl.jpg&w=1000&q=72&output=webp&we=1" alt="" onclick="openLb(this.src)">
     <div class="villa-thumbs" id="villa-thumbs"></div>
     <div class="villa-txt" id="villa-txt"></div>
     <div class="sec-head"><div class="sec-title t" data-fr="🛎️ Équipements" data-en="🛎️ Amenities">🛎️ Équipements</div></div>
@@ -541,7 +531,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <div class="screen" id="s-checkin">
-  <div class="ph"><img src="https://a0.muscache.com/im/pictures/hosting/Hosting-54153972/original/c827c80e-5b1d-4994-a8ac-bbfdd502d35e.png" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🔑 Check-in" data-en="🔑 Check-in">🔑 Check-in</div></div>
+  <div class="ph"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976359866_920eacc3_hardcoded-B-qvz8on.webp&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title t" data-fr="🔑 Check-in" data-en="🔑 Check-in">🔑 Check-in</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb">
     <div class="wifi-box">
@@ -557,7 +547,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <div class="screen" id="s-taxe">
-  <div class="ph"><img src="https://a0.muscache.com/im/pictures/miso/Hosting-54153972/original/ec3d996c-b4c4-4eec-801e-e74527da4d99.jpeg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🏨 Taxe de Séjour" data-en="🏨 Tourist Tax">🏨 Taxe de Séjour</div></div>
+  <div class="ph"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976357526_a9853f21_hardcoded-A-cstxjl.jpg&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title t" data-fr="🏨 Taxe de Séjour" data-en="🏨 Tourist Tax">🏨 Taxe de Séjour</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb"><div style="padding:16px 18px"><div id="taxe-content"></div></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
@@ -577,7 +567,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <div class="screen" id="s-regles">
-  <div class="ph"><img src="https://a0.muscache.com/im/pictures/hosting/Hosting-54153972/original/dd8ce4b6-f209-4f4a-b3a7-75210beffcd2.png" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="📋 Règles" data-en="📋 House Rules">📋 Règles</div></div>
+  <div class="ph"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976362391_396d1f5d_hardcoded-C-842vmj.jpg&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title t" data-fr="📋 Règles" data-en="📋 House Rules">📋 Règles</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb"><div class="rules-grid" id="rules-grid"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
@@ -585,7 +575,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <div class="screen" id="s-faq">
-  <div class="ph"><img src="https://a0.muscache.com/im/pictures/hosting/Hosting-54153972/original/8118c41b-9ddc-41e4-a5bb-fcc376265c5a.png" alt=""><div class="ph-grad"></div><div class="ph-title">FAQ</div></div>
+  <div class="ph"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976363515_77665ab8_hardcoded-D-adgvve.webp&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title">FAQ</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb"><div class="faq-list" id="faq-list"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
@@ -657,12 +647,30 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 <script>
 const SUPABASE_URL = 'https://uthnrcdulkmjlywwtkot.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_vF47Br0DC4emrqIf2AvnRA_L9y1EOnD';
-let supabaseClient = null;
-async function getSupabaseClient() {
-  if (supabaseClient) return supabaseClient;
-  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-  supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return supabaseClient;
+// ── Direct PostgREST calls (no SDK) — avoids an extra blocking fetch of the supabase-js bundle from esm.sh on every app open ──
+function sbHeaders(extra) {
+  return Object.assign({ apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY }, extra || {});
+}
+async function sbSelect(table, query) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, { headers: sbHeaders() });
+  if (!res.ok) throw new Error('select ' + table + ' failed: ' + res.status);
+  return res.json();
+}
+async function sbUpsert(table, body, onConflict) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?on_conflict=' + onConflict, {
+    method: 'POST',
+    headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' }),
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('upsert ' + table + ' failed: ' + res.status);
+}
+async function sbInsert(table, body) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: sbHeaders({ 'Content-Type': 'application/json', Prefer: 'return=minimal' }),
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('insert ' + table + ' failed: ' + res.status);
 }
 function uuidFallback() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -711,10 +719,9 @@ let adminPasswordMemory = null;
 
 async function loadContent() {
   try {
-    const sb = await getSupabaseClient();
-    const { data, error } = await sb.from('site_content').select('data').eq('id', 1).single();
-    if (!error && data && data.data) {
-      D = data.data;
+    const rows = await sbSelect('site_content', 'select=data&id=eq.1');
+    if (rows && rows[0] && rows[0].data) {
+      D = rows[0].data;
     } else {
       D = JSON.parse(JSON.stringify(FALLBACK_CONTENT));
     }
@@ -753,8 +760,8 @@ async function loadContent() {
 // ── GUEST DATA (favourites / ratings) — per-device, synced to Supabase `guest_data` table ──
 async function loadGuestData() {
   try {
-    const sb = await getSupabaseClient();
-    const { data } = await sb.from('guest_data').select('favs, ratings').eq('device_id', DEVICE_ID).maybeSingle();
+    const rows = await sbSelect('guest_data', 'select=favs,ratings&device_id=eq.' + encodeURIComponent(DEVICE_ID));
+    const data = rows && rows[0];
     if (data) {
       D.favs = data.favs || {};
       D.ratings = data.ratings || {};
@@ -763,8 +770,7 @@ async function loadGuestData() {
 }
 async function syncGuestData() {
   try {
-    const sb = await getSupabaseClient();
-    await sb.from('guest_data').upsert({ device_id: DEVICE_ID, favs: D.favs, ratings: D.ratings, updated_at: new Date().toISOString() });
+    await sbUpsert('guest_data', { device_id: DEVICE_ID, favs: D.favs, ratings: D.ratings, updated_at: new Date().toISOString() }, 'device_id');
   } catch (e) { /* best-effort; UI already reflects the change locally */ }
 }
 
@@ -806,6 +812,12 @@ function saveDataNow() {
 }
 function saveAndMark() { saveData(); }
 function getCat(id) { return D.categories.find(c => c.id === id); }
+// Rewrites an existing wsrv.nl-wrapped image URL to a smaller width for small display contexts
+// (thumbnails, grid tiles) so the browser doesn't download a full 1000px master for a 60-240px slot.
+function imgW(url, w, q) {
+  if (!url || !url.includes('wsrv.nl')) return url;
+  return url.replace(/([?&]w=)\d+/, '$1' + w).replace(/([?&]q=)\d+/, '$1' + (q || 65));
+}
 function uid() { return Math.random().toString(36).slice(2, 8); }
 
 // ── ADMIN PHOTO UPLOAD (via admin-upload-photo edge function; falls back to manual URL field) ──
@@ -917,12 +929,23 @@ function trackVisit(id) {
   D.stats.total = (D.stats.total || 0) + 1;
   logVisitEvent(id);
 }
+// Best-effort, cached-once visitor country lookup (free, no-key, CORS-enabled geo API). Never blocks the UI.
+let VISITOR_COUNTRY_PROMISE = null;
+function getVisitorCountry() {
+  if (!VISITOR_COUNTRY_PROMISE) {
+    VISITOR_COUNTRY_PROMISE = fetch('https://ipwho.is/')
+      .then(r => r.json())
+      .then(j => (j && j.success !== false && j.country) ? j.country : null)
+      .catch(() => null);
+  }
+  return VISITOR_COUNTRY_PROMISE;
+}
 // Fire-and-forget insert into visit_events — never blocks navigation, never throws.
 function logVisitEvent(id) {
   (async () => {
     try {
-      const sb = await getSupabaseClient();
-      await sb.from('visit_events').insert({ event_type: 'screen_view', target_id: id, device_id: DEVICE_ID });
+      const country = await getVisitorCountry();
+      await sbInsert('visit_events', { event_type: 'screen_view', target_id: id, device_id: DEVICE_ID, country });
     } catch (e) { /* best-effort analytics only */ }
   })();
 }
@@ -930,8 +953,8 @@ function logVisitEvent(id) {
 function logItemClick(itemId, itemLabel, categoryId) {
   (async () => {
     try {
-      const sb = await getSupabaseClient();
-      await sb.from('visit_events').insert({ event_type: 'item_click', target_id: itemId, target_label: itemLabel || '', category_id: categoryId || '', device_id: DEVICE_ID });
+      const country = await getVisitorCountry();
+      await sbInsert('visit_events', { event_type: 'item_click', target_id: itemId, target_label: itemLabel || '', category_id: categoryId || '', device_id: DEVICE_ID, country });
     } catch (e) { /* best-effort analytics only */ }
   })();
 }
@@ -944,7 +967,7 @@ function buildSlider() {
   const cont = document.getElementById('hero-slides');
   const dots = document.getElementById('hero-dots');
   if (!cont || !dots) return;
-  cont.innerHTML = imgs.map(g => `<div class="hero-slide"><img src="${g.url}" alt=""><div class="hero-grad"></div></div>`).join('');
+  cont.innerHTML = imgs.map((g, i) => `<div class="hero-slide"><img src="${g.url}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}><div class="hero-grad"></div></div>`).join('');
   dots.innerHTML = imgs.map((_, i) => `<div class="hero-dot${i === 0 ? ' active' : ''}" onclick="goSlide(${i})"></div>`).join('');
   if (slideTimer) clearInterval(slideTimer);
   slideTimer = setInterval(() => goSlide((slideIdx + 1) % imgs.length), 4000);
@@ -988,7 +1011,7 @@ function renderFavs() {
   }
   el.innerHTML = '<div class="place-list" style="margin-top:12px">' + favList.map(f => `
     <div class="pcard" style="display:flex;align-items:center;gap:12px;padding:12px 14px">
-      ${f.img ? `<img src="${f.img}" loading="lazy" decoding="async" style="width:60px;height:50px;border-radius:9px;object-fit:cover;flex-shrink:0">` : '<div style="width:60px;height:50px;border-radius:9px;background:#eef5ff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">❤️</div>'}
+      ${f.img ? `<img src="${imgW(f.img,160,60)}" loading="lazy" decoding="async" style="width:60px;height:50px;border-radius:9px;object-fit:cover;flex-shrink:0">` : '<div style="width:60px;height:50px;border-radius:9px;background:#eef5ff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">❤️</div>'}
       <div style="flex:1"><div style="font-size:14px;font-weight:700">${f.name || ''}</div></div>
       <button class="fav-btn" data-id="${f.id}" onclick="toggleFav('${f.id}','','')">❤️</button>
     </div>`).join('') + '</div>';
@@ -1246,7 +1269,7 @@ function renderHomeCats() {
     [rest[i], rest[i+1]].forEach(id => {
       if (!id) return;
       const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${c.img}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${c.icon} ${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}</div>`;
+      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${c.icon} ${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}</div>`;
     });
     html += '</div>';
   }
@@ -1269,13 +1292,13 @@ function renderVilla() {
   if (!photos.length) return;
   const main = document.getElementById('villa-main'); if (main) main.src = photos[0].url;
   const tv = document.getElementById('villa-thumbs');
-  if (tv) tv.innerHTML = photos.map((g, i) => `<div class="v-thumb${i === 0 ? ' active' : ''}" onclick="setVImg('${g.url}',this)"><img src="${g.url}" alt="" loading="lazy" decoding="async"></div>`).join('');
+  if (tv) tv.innerHTML = photos.map((g, i) => `<div class="v-thumb${i === 0 ? ' active' : ''}" onclick="setVImg('${g.url}',this)"><img src="${imgW(g.url,220,65)}" alt="" loading="lazy" decoding="async"></div>`).join('');
   const vc = D.villaContent || {};
   const vtxt = document.getElementById('villa-txt'); if (vtxt) vtxt.textContent = T(vc.contentFr || '', vc.contentEn || '');
   const amg = document.getElementById('am-grid');
   if (amg) amg.innerHTML = (D.amenities || []).map(a => `<div class="am-item"><span>${a.icon}</span><span>${T(a.nameFr, a.nameEn)}</span></div>`).join('');
   const gg = document.getElementById('gal-grid');
-  if (gg) gg.innerHTML = photos.map(g => `<div class="gal-item" onclick="openLb('${g.url}')"><img src="${g.url}" alt="${g.caption || ''}" loading="lazy" decoding="async"></div>`).join('');
+  if (gg) gg.innerHTML = photos.map(g => `<div class="gal-item" onclick="openLb('${g.url}')"><img src="${imgW(g.url,480,68)}" alt="${g.caption || ''}" loading="lazy" decoding="async"></div>`).join('');
 }
 function setVImg(url, el) {
   document.getElementById('villa-main').src = url;
@@ -1888,13 +1911,32 @@ async function aStats(el) {
     </div>`;
   }
 }
+function countryFlag(code) {
+  if (!code || code.length !== 2) return '🌍';
+  const cc = code.toUpperCase();
+  return String.fromCodePoint(...[...cc].map(c => 127397 + c.charCodeAt(0)));
+}
+function timeAgoFr(iso) {
+  const diffMs = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diffMs / 60000);
+  if (min < 1) return 'à l\'instant';
+  if (min < 60) return 'il y a ' + min + ' min';
+  const h = Math.floor(min / 60);
+  if (h < 24) return 'il y a ' + h + 'h';
+  const d = Math.floor(h / 24);
+  if (d < 30) return 'il y a ' + d + 'j';
+  return new Date(iso).toLocaleDateString('fr-FR');
+}
 function renderStats(el) {
   if (!statsData) return;
-  const d = statsData[statsRange] || { topScreens: [], topItems: [], total: 0 };
+  const d = statsData[statsRange] || { topScreens: [], topItems: [], topCountries: [], total: 0 };
   const topScreens = d.topScreens || [];
   const topItems = d.topItems || [];
+  const topCountries = d.topCountries || [];
+  const recent = statsData.recent || [];
   const maxScreen = topScreens.length ? topScreens[0].count : 1;
   const maxItem = topItems.length ? topItems[0].count : 1;
+  const maxCountry = topCountries.length ? topCountries[0].count : 1;
   const pill = (key, label) => `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;background:${statsRange===key?'var(--accent)':'transparent'};color:${statsRange===key?'#fff':'var(--muted)'}" onclick="statsRange='${key}';renderStats(document.getElementById('admin-content'))">${label}</div>`;
   el.innerHTML = `<div class="a-sec">
     <h3>📊 Statistiques de Visite</h3>
@@ -1917,8 +1959,47 @@ function renderStats(el) {
         <div class="stat-label"><span>${(it.label || it.id || '')}${it.category ? ` <span style="color:var(--muted);font-weight:400">(${it.category})</span>` : ''}</span><span>${it.count}</span></div>
         <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(it.count / maxItem * 100)}%"></div></div>
       </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
+    <h4 style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--muted)">VISITEURS PAR PAYS</h4>
+    ${topCountries.length ? topCountries.map(c => `
+      <div class="stat-bar-wrap" style="padding:0 0 10px">
+        <div class="stat-label"><span>${countryFlag(c.country && c.country.length===2 ? c.country : '')} ${c.country || 'Inconnu'}</span><span>${c.count}</span></div>
+        <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(c.count / maxCountry * 100)}%"></div></div>
+      </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
+    <h4 style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--muted)">ACTIVITÉ RÉCENTE</h4>
+    <div style="max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:10px">
+      ${recent.length ? recent.map(r => `
+        <div style="display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px">
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;color:var(--text)">${r.type === 'screen_view' ? '👁️ ' + (SCREEN_LABELS[r.id] || r.id) : '📍 ' + (r.label || r.id) + (r.category ? ` <span style="color:var(--muted);font-weight:400">(${r.category})</span>` : '')}</div>
+            <div style="color:var(--muted)">${timeAgoFr(r.at)}</div>
+          </div>
+          <div style="white-space:nowrap;font-weight:600">${countryFlag(r.country && r.country.length===2 ? r.country : '')} ${r.country || ''}</div>
+        </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune activité récente.</p>`}
+    </div>
     <button class="btn-save" style="margin-top:10px" onclick="aTab(21)">🔄 Rafraîchir</button>
+    <button class="btn-del" style="width:100%;margin-top:8px;padding:12px" onclick="resetStats()">🗑️ Réinitialiser les statistiques</button>
   </div>`;
+}
+async function resetStats() {
+  if (!confirm('⚠️ Ceci va supprimer définitivement TOUT l\'historique de visites (pays, pages, activité récente). Continuer ?')) return;
+  if (!confirm('Confirmer la réinitialisation des statistiques ?')) return;
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/admin-reset-stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
+      body: JSON.stringify({ password: adminPasswordMemory })
+    });
+    let json = {};
+    try { json = await res.json(); } catch (e) {}
+    if (res.ok && json && json.ok) {
+      alert('✅ Statistiques réinitialisées.');
+      aTab(21);
+    } else {
+      alert('❌ Échec de la réinitialisation : ' + (json && json.error ? json.error : 'erreur inconnue'));
+    }
+  } catch (e) {
+    alert('❌ Erreur réseau lors de la réinitialisation.');
+  }
 }
 
 function aBackup(el) {
@@ -2042,7 +2123,7 @@ var BACKUP_DEFAULTS = {"villaContent": {"contentFr": "Villa P'tit Bouchon - Face
 
 </div><!-- /app-shell -->
 <div id="lang-screen">
-  <div class="ls-bg"><img id="ls-img" src="https://a0.muscache.com/im/pictures/miso/Hosting-54153972/original/ec3d996c-b4c4-4eec-801e-e74527da4d99.jpeg" alt=""></div>
+  <div class="ls-bg"><img id="ls-img" src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976357526_a9853f21_hardcoded-A-cstxjl.jpg&w=800&q=70&output=webp&we=1" alt="" fetchpriority="high"></div>
   <div class="ls-overlay"></div>
   <div class="ls-content">
     <div class="ls-logo" id="ls-title">P'tit Bouchon</div>
@@ -2051,13 +2132,13 @@ var BACKUP_DEFAULTS = {"villaContent": {"contentFr": "Villa P'tit Bouchon - Face
     <p class="ls-prompt">Choisissez votre langue<br><span>Choose your language</span></p>
     <div class="ls-btns">
       <button class="lbb lbb-fr" onclick="initLang('fr')">
-        <div class="lbb-bg" id="lbb-bg-fr" style="background-image:url('https://a0.muscache.com/im/pictures/miso/Hosting-54153972/original/ec3d996c-b4c4-4eec-801e-e74527da4d99.jpeg');position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div class="lbb-bg" id="lbb-bg-fr" style="background-image:url('https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976357526_a9853f21_hardcoded-A-cstxjl.jpg&w=320&q=70&output=webp&we=1');position:absolute;inset:0;background-size:cover;background-position:center"></div>
         <div class="lbb-mask" id="lbb-mask-fr" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.2) 100%)"></div>
         <div class="lbb-flag">🇫🇷</div>
         <div class="lbb-txt"><strong>Français</strong><small>Continuer</small></div>
       </button>
       <button class="lbb lbb-en" onclick="initLang('en')">
-        <div class="lbb-bg" id="lbb-bg-en" style="background-image:url('https://a0.muscache.com/im/pictures/hosting/Hosting-54153972/original/8118c41b-9ddc-41e4-a5bb-fcc376265c5a.png');position:absolute;inset:0;background-size:cover;background-position:center"></div>
+        <div class="lbb-bg" id="lbb-bg-en" style="background-image:url('https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976363515_77665ab8_hardcoded-D-adgvve.webp&w=320&q=70&output=webp&we=1');position:absolute;inset:0;background-size:cover;background-position:center"></div>
         <div class="lbb-mask" id="lbb-mask-en" style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.7) 0%,rgba(0,0,0,.2) 100%)"></div>
         <div class="lbb-flag">🇬🇧</div>
         <div class="lbb-txt"><strong>English</strong><small>Continue</small></div>
