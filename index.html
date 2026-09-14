@@ -12,7 +12,7 @@
 <title>P'tit Bouchon — Guest Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Bodoni+Moda:ital,wght@0,500;0,600;0,700;1,500&family=Italianno&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Bodoni+Moda:ital,wght@0,500;0,600;0,700;1,500&family=Italianno&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
@@ -141,12 +141,11 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .hero-dots{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3}
 .hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .3s;cursor:pointer}
 .hero-dot.active{background:#fff;width:18px;border-radius:3px}
-.hero-top{position:absolute;top:0;left:0;right:0;padding:46px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;z-index:4}
+.hero-top{position:absolute;top:0;left:0;right:0;padding:32px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;z-index:5}
 .hero-logo{color:#fff;font-family:var(--font-head);font-size:34px;font-weight:700;line-height:1.1;letter-spacing:.2px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
-.hero-logo small{display:block;font-family:var(--font-body);font-size:13px;font-weight:400;opacity:.85;margin-top:5px}
-.hero-top-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.hero-quote{color:rgba(255,255,255,.95);font-family:'Italianno',cursive;font-style:normal;font-size:26px;line-height:1.15;text-align:right;text-shadow:0 2px 10px rgba(0,0,0,.35);max-width:180px}
-.hero-tags{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.hero-logo small{display:block;font-family:'Montserrat',var(--font-body);font-size:13px;font-weight:300;letter-spacing:.3px;opacity:.9;margin-top:5px}
+.hero-quote{position:absolute;top:12%;right:20px;color:rgba(255,255,255,.95);font-family:'Italianno',cursive;font-style:normal;font-size:26px;line-height:1.15;text-align:right;text-shadow:0 2px 10px rgba(0,0,0,.35);max-width:180px;z-index:4}
+.hero-tags{position:absolute;top:58%;right:22px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;z-index:4}
 .hero-tags span{color:rgba(255,255,255,.85);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.3)}
 .hero-bottom{display:none;position:absolute;bottom:0;left:0;right:0;padding:0 20px 52px;z-index:4}
 .hero-title{font-family:var(--font-head);color:#fff;font-size:18px;font-weight:700;text-shadow:0 2px 14px rgba(0,0,0,.5)}
@@ -462,15 +461,13 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     <div class="hero-dots" id="hero-dots"></div>
     <div class="hero-top">
       <div class="hero-logo"><span id="h-name">P'tit Bouchon</span><small id="h-tagline">Villa face à la mer · Île Maurice</small></div>
-      <div class="hero-top-right">
-        <div class="lang-toggle"><div class="lang-opt active" onclick="setLang('fr')">FR</div><div class="lang-opt" onclick="setLang('en')">EN</div></div>
-        <div class="hero-quote t" data-fr="Ici, le temps prend une autre allure." data-en="Here, time takes on a different pace.">Ici, le temps prend une autre allure.</div>
-        <div class="hero-tags">
-          <span class="t" data-fr="Mer" data-en="Sea">Mer</span>
-          <span class="t" data-fr="Nature" data-en="Nature">Nature</span>
-          <span class="t" data-fr="Partage" data-en="Sharing">Partage</span>
-        </div>
-      </div>
+      <div class="lang-toggle"><div class="lang-opt active" onclick="setLang('fr')">FR</div><div class="lang-opt" onclick="setLang('en')">EN</div></div>
+    </div>
+    <div class="hero-quote t" data-fr="Ici, le temps prend une autre allure." data-en="Here, time takes on a different pace.">Ici, le temps prend une autre allure.</div>
+    <div class="hero-tags">
+      <span class="t" data-fr="Mer" data-en="Sea">Mer</span>
+      <span class="t" data-fr="Nature" data-en="Nature">Nature</span>
+      <span class="t" data-fr="Partage" data-en="Sharing">Partage</span>
     </div>
     <div class="hero-bottom">
       <div class="hero-title t" data-fr="Bienvenue" data-en="Welcome">Bienvenue</div>
