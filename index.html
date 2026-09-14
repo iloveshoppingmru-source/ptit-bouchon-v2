@@ -154,8 +154,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .lang-opt{padding:5px 10px;font-size:11px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s}
 .lang-opt.active{background:rgba(255,255,255,.25);color:#fff}
 .pill-nav{background:var(--card);border-radius:999px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
-.pill-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
-.pill-item:not(:last-child){border-right:1px solid var(--border)}
+.pill-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
+.pill-item:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:26px;background:var(--border)}
 .pill-item.active{color:var(--text)}
 .pill-ico{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
 .pill-item.active .pill-ico{background:var(--dark);color:#fff}
@@ -274,7 +274,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .am-item span:first-child{font-size:26px;flex-shrink:0}
 .itin-list{padding:0 18px;display:flex;flex-direction:column;gap:9px}
 .itin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.itin-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;background:#f0f7ff;-webkit-user-select:none;user-select:none}
+.itin-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;background:#e8decb;-webkit-user-select:none;user-select:none}
 .itin-ico{font-size:21px}.itin-name{font-size:18px;font-weight:700;color:var(--dark)}.itin-sub{font-size:15px;color:var(--muted);margin-top:2px}
 .itin-chev{margin-left:auto;color:var(--muted);font-size:15px;transition:transform .2s}
 .itin-card.open .itin-chev{transform:rotate(90deg)}
@@ -478,18 +478,12 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   <div class="pill-nav">
     <div class="pill-item active" onclick="homeTab(0)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="t" data-fr="Accueil" data-en="Home">Accueil</span></div>
     <div class="pill-item" onclick="homeTab(1)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div><span class="t" data-fr="Découvrir" data-en="Discover">Découvrir</span></div>
-    <div class="pill-item" onclick="homeTab(2)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="t" data-fr="Bonnes adresses" data-en="Good spots">Bonnes adresses</span></div>
+    <div class="pill-item" onclick="homeTab(2)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="8 12 11 15 16 9"/></svg></div><span class="t" data-fr="Vos essentiels" data-en="Essentials">Vos essentiels</span></div>
     <div class="pill-item" onclick="homeTab(3)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><span class="t" data-fr="Infos pratiques" data-en="Practical info">Infos pratiques</span></div>
     <div class="pill-item" onclick="homeTab(4)"><div class="pill-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="t" data-fr="Notre villa" data-en="Our villa">Notre villa</span></div>
   </div>
   <div class="scroll spb" id="tab-0">
-    <div class="sec-head"><div class="sec-title t" data-fr="Vos essentiels" data-en="Your essentials">Vos essentiels</div></div>
-    <div class="ess-card">
-      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-in" data-en="Check-in">Check-in</div><div class="ess-val" id="q-ci">08:00</div></div>
-      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-out" data-en="Check-out">Check-out</div><div class="ess-val" id="q-co">11:00</div></div>
-      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="ess-label t" data-fr="Voyageurs" data-en="Guests">Voyageurs</div><div class="ess-val">6</div></div>
-      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div class="ess-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="ess-val">8 min</div></div>
-    </div>
+    <div id="home-cats-grid"></div>
     <div class="sec-head"><div class="sec-title t" data-fr="📞 Contact" data-en="📞 Contact">📞 Contact</div></div>
     <div class="cta-grid">
       <a id="cta-wa" href="#" target="_blank" class="cta cta-wa">💬 WhatsApp</a>
@@ -509,7 +503,13 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     <div style="height:10px"></div>
   </div>
   <div class="scroll spb" id="tab-2" style="display:none">
-    <div id="home-cats-grid"></div>
+    <div class="sec-head"><div class="sec-title t" data-fr="Vos essentiels" data-en="Your essentials">Vos essentiels</div></div>
+    <div class="ess-card">
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-in" data-en="Check-in">Check-in</div><div class="ess-val" id="q-ci">08:00</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-out" data-en="Check-out">Check-out</div><div class="ess-val" id="q-co">11:00</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="ess-label t" data-fr="Voyageurs" data-en="Guests">Voyageurs</div><div class="ess-val">6</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div class="ess-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="ess-val">8 min</div></div>
+    </div>
     <div style="height:10px"></div>
   </div>
   <div class="scroll spb" id="tab-3" style="display:none">
@@ -1389,7 +1389,7 @@ function renderHomeCats() {
   const secTitleFr = (D.settings && D.settings.sectionTitleFr) || 'Gastronomie & Sorties';
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
-  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(2)">${T('Tout voir','See all')} →</div></div>`;
+  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
   const first = visible.slice(0, 3);
   if (first.length) {
     html += '<div class="explore-grid">';
