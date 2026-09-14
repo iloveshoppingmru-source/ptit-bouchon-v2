@@ -1100,6 +1100,17 @@ function adminPhotoChange(inputEl, statusId, setter) {
     }
   });
 }
+// Returns <option> markup for the photo cropping/position picker (object-position values).
+function posOptions(current) {
+  const opts = [
+    ['center','Centre'],
+    ['center top','Haut'],
+    ['center bottom','Bas'],
+    ['left center','Gauche'],
+    ['right center','Droite']
+  ];
+  return opts.map(([v,label]) => `<option value="${v}" ${(current||'center')===v?'selected':''}>${label}</option>`).join('');
+}
 // Returns the reusable "📤 Uploader" markup (hidden file input + button + status line) for a photo field.
 // `fieldUid` must be unique per rendered field; `setterJs` is raw JS run with `url` in scope.
 function photoUploadBlock(fieldUid, setterJs) {
@@ -1283,7 +1294,7 @@ function pcard(item, icon, categoryId, big) {
   const pid = 'pc' + uid();
   return `<div class="pcard${big ? ' pcard-big' : ''}">
     <div class="pcard-img-wrap">
-      ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
+      ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" style="object-position:${item.imagePos || 'center'}" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
       <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="pcard-body">
@@ -1580,17 +1591,18 @@ function renderHomeCats() {
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
   let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
+  const catPos = id => (D.catImagePos && D.catImagePos[id]) || 'center';
   const smallTile = id => {
     const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async" style="object-position:${catPos(id)}"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
   };
   const bigTile = id => {
     const c = defs[id];
-    return `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+    return `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt="" style="object-position:${catPos(id)}"><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
   };
   const trioTile = id => {
     const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async" style="object-position:${catPos(id)}"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
   };
   const trioRow = (bigId, s1, s2, bigLeft) => {
     const bigHtml = bigTile(bigId);
@@ -1924,9 +1936,12 @@ function renderCatImagesHTML() {
       </div>
       <div class="coll-body">
         <div class="a-field"><label>URL Photo</label><input value="${url.replace(/"/g,'"')}" onchange="D.catImages=D.catImages||{};D.catImages['${id}']=this.value;saveData();renderAll();aTab(0)">
-          <img src="${url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:6px">
+          <img src="${url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:6px;object-position:${(D.catImagePos && D.catImagePos[id]) || 'center'}">
           ${photoUploadBlock('cimg-'+id, `D.catImages=D.catImages||{};D.catImages['${id}']=url;saveData();renderAll();aTab(0);`)}
         </div>
+        <div class="a-field"><label>Cadrage de la photo</label><select onchange="D.catImagePos=D.catImagePos||{};D.catImagePos['${id}']=this.value;saveData();renderAll();aTab(0)">
+          ${posOptions(D.catImagePos && D.catImagePos[id])}
+        </select></div>
         ${isCustom ? `<button class="btn-del" onclick="delete D.catImages['${id}'];saveData();renderAll();aTab(0)">🗑️ Revenir à la photo par défaut</button>` : ''}
       </div></div>`;
   }).join('');
@@ -2152,8 +2167,11 @@ function catItem(item, i, ci) {
       <div class="a-field"><label>Lien Google Maps</label><input value="${item.mapLink||''}" onchange="D.categories[${ci}].items[${i}].mapLink=this.value;saveData()"></div>
       <div class="a-field"><label>▶ Lien Vidéo (YouTube, etc.)</label><input value="${item.videoLink||''}" placeholder="https://youtube.com/..." onchange="D.categories[${ci}].items[${i}].videoLink=this.value;saveData()"></div>
       <div class="a-field"><label>URL Photo</label><input value="${item.image||''}" onchange="D.categories[${ci}].items[${i}].image=this.value;saveData()">
-        ${item.image ? `<img src="${item.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px">` : ''}
+        ${item.image ? `<img src="${item.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px;object-position:${item.imagePos || 'center'}">` : ''}
         ${photoUploadBlock('cat-'+ci+'-'+i, `D.categories[${ci}].items[${i}].image=url;saveData();aTab(curTab);`)}</div>
+      ${item.image ? `<div class="a-field"><label>Cadrage de la photo</label><select onchange="D.categories[${ci}].items[${i}].imagePos=this.value;saveData();aTab(curTab)">
+        ${posOptions(item.imagePos)}
+      </select></div>` : ''}
       <button class="btn-del" onclick="D.categories[${ci}].items.splice(${i},1);saveData();aTab(curTab)">🗑️ Supprimer ce lieu</button>
     </div></div>`;
 }
