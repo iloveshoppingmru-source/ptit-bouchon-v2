@@ -17,7 +17,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
-:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f4f8fd;--card:#fff;--text:#0d1f35;--muted:#6b8caa;--border:#dde8f5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
+:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
 #app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:#e0e8f0}
 
 @media(min-width:600px){
@@ -154,7 +154,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .lang-opt{padding:5px 10px;font-size:11px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s}
 .lang-opt.active{background:rgba(255,255,255,.25);color:#fff}
 .pill-nav{background:var(--card);border-radius:999px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
-.pill-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 2px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap}
+.pill-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
 .pill-item:not(:last-child){border-right:1px solid var(--border)}
 .pill-item.active{color:var(--text)}
 .pill-ico{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
@@ -297,7 +297,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .cta-em{background:var(--card);color:var(--text);border:1px solid var(--border)}.cta-ab{background:#ff5a5f;color:#fff}
 .map-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;padding:14px;border-radius:var(--r);margin:14px 18px 0;font-size:13px;font-weight:700}
 .alert-box{margin:14px 18px 0;background:#fff3e0;border:1px solid #ffcc02;border-radius:11px;padding:14px 16px;font-size:15px;color:#7a4900;display:flex;gap:10px;align-items:center;justify-content:center;text-align:center;font-weight:600}
-.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1.5px solid #dde8f5;display:flex;padding:8px 0 calc(8px + var(--safe));z-index:200;width:100%}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe));z-index:200;width:100%}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 4px;cursor:pointer;color:#aac4e0;font-size:12px;font-weight:600;transition:color .2s;-webkit-user-select:none;user-select:none}
 .bnav-item.active{color:var(--dark,#0a1628)}
 .bnav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -476,9 +476,11 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     </div>
   </div>
   <div class="pill-nav">
-    <div class="pill-item active" onclick="homeTab(0)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><span class="t" data-fr="Explorer" data-en="Explore">Explorer</span></div>
-    <div class="pill-item" onclick="homeTab(1)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span class="t" data-fr="Contact" data-en="Contact">Contact</span></div>
-    <div class="pill-item" onclick="homeTab(2)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="t" data-fr="La Villa" data-en="The Villa">La Villa</span></div>
+    <div class="pill-item active" onclick="homeTab(0)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="t" data-fr="Accueil" data-en="Home">Accueil</span></div>
+    <div class="pill-item" onclick="homeTab(1)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg></div><span class="t" data-fr="Découvrir" data-en="Discover">Découvrir</span></div>
+    <div class="pill-item" onclick="homeTab(2)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="t" data-fr="Bonnes adresses" data-en="Good spots">Bonnes adresses</span></div>
+    <div class="pill-item" onclick="homeTab(3)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></div><span class="t" data-fr="Infos pratiques" data-en="Practical info">Infos pratiques</span></div>
+    <div class="pill-item" onclick="homeTab(4)"><div class="pill-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="t" data-fr="Notre villa" data-en="Our villa">Notre villa</span></div>
   </div>
   <div class="scroll spb" id="tab-0">
     <div class="sec-head"><div class="sec-title t" data-fr="Vos essentiels" data-en="Your essentials">Vos essentiels</div></div>
@@ -488,23 +490,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="ess-label t" data-fr="Voyageurs" data-en="Guests">Voyageurs</div><div class="ess-val">6</div></div>
       <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div class="ess-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="ess-val">8 min</div></div>
     </div>
-    <div id="home-cats-grid"></div>
-    <div class="sec-head"><div class="sec-title t" data-fr="Infos Pratiques" data-en="Practical Info">Infos Pratiques</div></div>
-    <div class="info-list">
-      <div class="info-card" onclick="go('s-checkin')"><div class="info-icon ic-blue"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="info-text"><h3 class="t" data-fr="Check-in & Arrivée" data-en="Check-in & Arrival">Check-in & Arrivée</h3><p class="t" data-fr="Self check-in · Boîtier · WiFi" data-en="Self check-in · Lockbox · WiFi">Self check-in · WiFi</p></div><div class="info-chev">›</div></div>
-      <div class="info-card" onclick="go('s-taxe')"><div class="info-icon ic-amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="info-text"><h3 class="t" data-fr="Taxe de Séjour" data-en="Tourist Tax">Taxe de Séjour</h3><p class="t" data-fr="Informations importantes" data-en="Important information">Informations importantes</p></div><div class="info-chev">›</div></div>
-      <div class="info-card" onclick="go('s-urgences')"><div class="info-icon ic-coral"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/></svg></div><div class="info-text"><h3 class="t" data-fr="🏥 Urgences & Santé" data-en="🏥 Emergency">🏥 Urgences & Santé</h3><p>SAMU 114 · Police 999</p></div><div class="info-chev">›</div></div>
-      <div class="info-card" onclick="go('s-regles')"><div class="info-icon ic-dark"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="info-text"><h3 class="t" data-fr="📋 Règles de la Maison" data-en="📋 House Rules">📋 Règles de la Maison</h3><p class="t" data-fr="10 règles importantes" data-en="10 important rules">10 règles</p></div><div class="info-chev">›</div></div>
-      <div class="info-card" onclick="go('s-faq')"><div class="info-icon ic-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="info-text"><h3>FAQ</h3><p class="t" data-fr="Questions fréquentes" data-en="Frequently asked questions">Questions fréquentes</p></div><div class="info-chev">›</div></div>
-    </div>
-    <div class="sec-head"><div class="sec-title t" data-fr="💡 Itinéraires Suggérés" data-en="💡 Suggested Itineraries">💡 Itinéraires Suggérés</div></div>
-    <div class="itin-list" id="home-itins"></div>
-    <div class="sec-head"><div class="sec-title t" data-fr="🎬 Découvrir l'île" data-en="🎬 Discover the Island">🎬 Découvrir l'île</div></div>
-    <div class="video-grid" id="videos-grid"></div>
-    <a href="#" onclick="openAdmin();return false" class="admin-link">⚙ Administration</a>
-    <div style="height:10px"></div>
-  </div>
-  <div class="scroll spb" id="tab-1" style="display:none">
     <div class="sec-head"><div class="sec-title t" data-fr="📞 Contact" data-en="📞 Contact">📞 Contact</div></div>
     <div class="cta-grid">
       <a id="cta-wa" href="#" target="_blank" class="cta cta-wa">💬 WhatsApp</a>
@@ -513,9 +498,32 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       <a href="https://www.airbnb.com/rooms/54153972" target="_blank" class="cta cta-ab">🏡 Airbnb</a>
     </div>
     <a id="map-btn-h" href="#" target="_blank" class="map-btn">🗺️ <span class="t" data-fr="Ouvrir Google Maps" data-en="Open Google Maps">Google Maps</span></a>
+    <a href="#" onclick="openAdmin();return false" class="admin-link">⚙ Administration</a>
+    <div style="height:10px"></div>
+  </div>
+  <div class="scroll spb" id="tab-1" style="display:none">
+    <div class="sec-head"><div class="sec-title t" data-fr="💡 Itinéraires Suggérés" data-en="💡 Suggested Itineraries">💡 Itinéraires Suggérés</div></div>
+    <div class="itin-list" id="home-itins"></div>
+    <div class="sec-head"><div class="sec-title t" data-fr="🎬 Découvrir l'île" data-en="🎬 Discover the Island">🎬 Découvrir l'île</div></div>
+    <div class="video-grid" id="videos-grid"></div>
     <div style="height:10px"></div>
   </div>
   <div class="scroll spb" id="tab-2" style="display:none">
+    <div id="home-cats-grid"></div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="scroll spb" id="tab-3" style="display:none">
+    <div class="sec-head"><div class="sec-title t" data-fr="Infos Pratiques" data-en="Practical Info">Infos Pratiques</div></div>
+    <div class="info-list">
+      <div class="info-card" onclick="go('s-checkin')"><div class="info-icon ic-blue"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="info-text"><h3 class="t" data-fr="Check-in & Arrivée" data-en="Check-in & Arrival">Check-in & Arrivée</h3><p class="t" data-fr="Self check-in · Boîtier · WiFi" data-en="Self check-in · Lockbox · WiFi">Self check-in · WiFi</p></div><div class="info-chev">›</div></div>
+      <div class="info-card" onclick="go('s-taxe')"><div class="info-icon ic-amber"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="info-text"><h3 class="t" data-fr="Taxe de Séjour" data-en="Tourist Tax">Taxe de Séjour</h3><p class="t" data-fr="Informations importantes" data-en="Important information">Informations importantes</p></div><div class="info-chev">›</div></div>
+      <div class="info-card" onclick="go('s-urgences')"><div class="info-icon ic-coral"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/></svg></div><div class="info-text"><h3 class="t" data-fr="🏥 Urgences & Santé" data-en="🏥 Emergency">🏥 Urgences & Santé</h3><p>SAMU 114 · Police 999</p></div><div class="info-chev">›</div></div>
+      <div class="info-card" onclick="go('s-regles')"><div class="info-icon ic-dark"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div class="info-text"><h3 class="t" data-fr="📋 Règles de la Maison" data-en="📋 House Rules">📋 Règles de la Maison</h3><p class="t" data-fr="10 règles importantes" data-en="10 important rules">10 règles</p></div><div class="info-chev">›</div></div>
+      <div class="info-card" onclick="go('s-faq')"><div class="info-icon ic-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="info-text"><h3>FAQ</h3><p class="t" data-fr="Questions fréquentes" data-en="Frequently asked questions">Questions fréquentes</p></div><div class="info-chev">›</div></div>
+    </div>
+    <div style="height:10px"></div>
+  </div>
+  <div class="scroll spb" id="tab-4" style="display:none">
     <img class="villa-main-img" id="villa-main" src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976357526_a9853f21_hardcoded-A-cstxjl.jpg&w=1000&q=72&output=webp&we=1" alt="" onclick="openLb(this.src)">
     <div class="villa-thumbs" id="villa-thumbs"></div>
     <div class="villa-txt" id="villa-txt"></div>
@@ -1006,7 +1014,7 @@ function goto(id) {
 function back() { if (navStack.length > 1) navStack.pop(); go(navStack[navStack.length - 1]); }
 function homeTab(i) {
   document.querySelectorAll('.pill-item').forEach((p, j) => p.classList.toggle('active', j === i));
-  [0,1,2].forEach(j => { const e = document.getElementById('tab-' + j); if (e) e.style.display = j === i ? 'block' : 'none'; });
+  [0,1,2,3,4].forEach(j => { const e = document.getElementById('tab-' + j); if (e) e.style.display = j === i ? 'block' : 'none'; });
   const home = document.getElementById('s-home'); if (home) home.scrollTop = 0;
 }
 function updateBnav(id) {
@@ -1381,7 +1389,7 @@ function renderHomeCats() {
   const secTitleFr = (D.settings && D.settings.sectionTitleFr) || 'Gastronomie & Sorties';
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
-  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
+  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(2)">${T('Tout voir','See all')} →</div></div>`;
   const first = visible.slice(0, 3);
   if (first.length) {
     html += '<div class="explore-grid">';
