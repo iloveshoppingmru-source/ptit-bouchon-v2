@@ -711,6 +711,31 @@ let DEVICE_ID = (function() {
   return id;
 })();
 
+// ── UI CLICK SOUND (soft tap sound on any menu/link/button tap) ──
+// Synthesized in-browser (no audio file to fetch) so it works offline and adds zero load time.
+let __clickAudioCtx = null;
+function playClickSound() {
+  try {
+    if (!__clickAudioCtx) __clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = __clickAudioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1000, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.03);
+    gain.gain.setValueAtTime(0.14, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.06);
+  } catch (e) { /* Web Audio unavailable — fail silently */ }
+}
+document.addEventListener('click', function (e) {
+  const el = e.target.closest('a, button, [onclick]');
+  if (el) playClickSound();
+}, true);
+
 // ── FALLBACK CONTENT (safety net only — used if Supabase is unreachable, e.g. free-tier project paused) ──
 const FALLBACK_CONTENT = {
   settings: { propertyName: "P'tit Bouchon", tagline: 'Villa face à la mer - Île Maurice', phone: '', whatsapp: '', email: '', checkIn: '14:00', checkOut: '11:00', address: '' },
