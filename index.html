@@ -103,7 +103,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 @keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .scroll::-webkit-scrollbar{display:none}
-.spb{padding-bottom:calc(84px + var(--safe))}
+.spb{padding-bottom:calc(84px + min(var(--safe),34px))}
 /* Home screen: scroll the hero photo + pill menu + content together as one page,
    instead of pinning the hero/menu and only scrolling the list below them. */
 #s-home.screen.active{overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -343,7 +343,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .cta-em{background:var(--card);color:var(--text);border:1px solid var(--border)}.cta-ab{background:#ff5a5f;color:#fff}
 .map-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;padding:14px;border-radius:var(--r);margin:14px 18px 0;font-size:13px;font-weight:700}
 .alert-box{margin:14px 18px 0;background:#fff3e0;border:1px solid #ffcc02;border-radius:11px;padding:14px 16px;font-size:15px;color:#7a4900;display:flex;gap:10px;align-items:center;justify-content:center;text-align:center;font-weight:600}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:8px 0 calc(8px + var(--safe));z-index:200;width:100%;max-width:var(--max)}
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:8px 0 calc(8px + min(var(--safe),34px));z-index:200;width:100%}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 4px;cursor:pointer;color:#aac4e0;font-size:12px;font-weight:600;transition:color .2s;-webkit-user-select:none;user-select:none}
 .bnav-item.active{color:var(--dark,#0a1628)}
 .bnav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -437,8 +437,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .explore-grid{padding:0 14px 6px;gap:7px}
   .explore-grid .feat-card{height:130px}
   .explore-stack{gap:7px;height:130px}
-  .spb{padding-bottom:calc(64px + var(--safe))}
-  .bottom-nav{padding:5px 0 calc(5px + var(--safe))}
+  .spb{padding-bottom:calc(64px + min(var(--safe),34px))}
+  .bottom-nav{padding:5px 0 calc(5px + min(var(--safe),34px))}
   .bnav-item svg{width:18px;height:18px}
   .bnav-item{font-size:9px;gap:2px;padding:4px 3px}
 }
