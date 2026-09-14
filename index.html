@@ -274,7 +274,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .am-item span:first-child{font-size:26px;flex-shrink:0}
 .itin-list{padding:0 18px;display:flex;flex-direction:column;gap:9px}
 .itin-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.itin-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;background:#e8decb;-webkit-user-select:none;user-select:none}
+.itin-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer;background:var(--card);-webkit-user-select:none;user-select:none}
 .itin-ico{font-size:21px}.itin-name{font-size:18px;font-weight:700;color:var(--dark)}.itin-sub{font-size:15px;color:var(--muted);margin-top:2px}
 .itin-chev{margin-left:auto;color:var(--muted);font-size:15px;transition:transform .2s}
 .itin-card.open .itin-chev{transform:rotate(90deg)}
@@ -484,14 +484,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   </div>
   <div class="scroll spb" id="tab-0">
     <div id="home-cats-grid"></div>
-    <div class="sec-head"><div class="sec-title t" data-fr="📞 Contact" data-en="📞 Contact">📞 Contact</div></div>
-    <div class="cta-grid">
-      <a id="cta-wa" href="#" target="_blank" class="cta cta-wa">💬 WhatsApp</a>
-      <a id="cta-ph" href="#" class="cta cta-ph">📱 <span class="t" data-fr="Appeler" data-en="Call">Appeler</span></a>
-      <a id="cta-em" href="#" class="cta cta-em">✉️ Email</a>
-      <a href="https://www.airbnb.com/rooms/54153972" target="_blank" class="cta cta-ab">🏡 Airbnb</a>
-    </div>
-    <a id="map-btn-h" href="#" target="_blank" class="map-btn">🗺️ <span class="t" data-fr="Ouvrir Google Maps" data-en="Open Google Maps">Google Maps</span></a>
     <a href="#" onclick="openAdmin();return false" class="admin-link">⚙ Administration</a>
     <div style="height:10px"></div>
   </div>
@@ -510,6 +502,14 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="ess-label t" data-fr="Voyageurs" data-en="Guests">Voyageurs</div><div class="ess-val">6</div></div>
       <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div class="ess-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="ess-val">8 min</div></div>
     </div>
+    <div class="sec-head"><div class="sec-title t" data-fr="📞 Contact" data-en="📞 Contact">📞 Contact</div></div>
+    <div class="cta-grid">
+      <a id="cta-wa" href="#" target="_blank" class="cta cta-wa">💬 WhatsApp</a>
+      <a id="cta-ph" href="#" class="cta cta-ph">📱 <span class="t" data-fr="Appeler" data-en="Call">Appeler</span></a>
+      <a id="cta-em" href="#" class="cta cta-em">✉️ Email</a>
+      <a href="https://www.airbnb.com/rooms/54153972" target="_blank" class="cta cta-ab">🏡 Airbnb</a>
+    </div>
+    <a id="map-btn-h" href="#" target="_blank" class="map-btn">🗺️ <span class="t" data-fr="Ouvrir Google Maps" data-en="Open Google Maps">Google Maps</span></a>
     <div style="height:10px"></div>
   </div>
   <div class="scroll spb" id="tab-3" style="display:none">
