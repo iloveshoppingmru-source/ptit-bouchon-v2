@@ -10,11 +10,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a1628">
 <title>P'tit Bouchon — Guest Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
-:root{--blue:#1b6ca8;--dark:#0a1628;--bg:#f4f8fd;--card:#fff;--text:#0d1f35;--muted:#6b8caa;--border:#dde8f5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--font-head:'Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
+:root{--blue:#1b6ca8;--dark:#0a1628;--bg:#f4f8fd;--card:#fff;--text:#0d1f35;--muted:#6b8caa;--border:#dde8f5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--font-head:'Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
 #app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:#e0e8f0}
 
 @media(min-width:600px){
@@ -22,7 +25,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   #admin-app .a-sec{padding:20px 22px}
 
   :root{--max:640px;--r:18px}
-  .hero{height:320px}
+  .hero{height:520px}
   .ph{height:clamp(160px,30vw,240px)}
   .sec-title{font-size:30px !important}
   .pcard-name{font-size:16px}
@@ -30,13 +33,17 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .feat-card{height:210px;margin:0 22px 12px}
   .grid2{padding:0 22px}
   .grid-card{height:150px}
+  .explore-grid{padding:0 22px 10px}
+  .explore-grid .feat-card{height:310px}
+  .explore-stack .grid-card{height:150px}
   .place-list{padding:0 22px}
   .info-list{padding:0 22px}
   .quick-grid{padding:18px 22px 0;gap:11px}
+  .ess-card{margin:14px 22px 0}
   .q-card{padding:14px 10px}
   .q-ico{font-size:26px}
   .q-val{font-size:15px}
-  .pill-nav{margin:-22px 18px 0}
+  .pill-nav{margin:-38px 18px 0}
   .itin-list{padding:0 22px}
   .video-grid{padding:0 22px}
   .gal-grid{padding:0 22px}
@@ -50,19 +57,24 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .btn-map,.btn-tel,.btn-vid{font-size:12px;padding:8px 15px}
   .rental-card{margin:0 22px 13px}
   .hero-title{font-size:clamp(18px,3.5vw,26px) !important}
-  .hero-logo{font-size:clamp(18px,3.5vw,26px)}
+  .hero-logo{font-size:clamp(30px,5vw,40px)}
 }
 
 @media(min-width:1024px){
   :root{--max:800px}
-  .hero{height:380px}
+  .hero{height:600px}
+  .hero-logo{font-size:46px}
   .ph{height:220px}
   .pcard-img{height:210px}
   .feat-card{height:280px;margin:0 30px 14px}
   .grid2{padding:0 30px}
   .grid-card{height:190px}
+  .explore-grid{padding:0 30px 10px}
+  .explore-grid .feat-card{height:390px}
+  .explore-stack .grid-card{height:190px}
   .place-list,.info-list,.itin-list,.video-grid,.gal-grid,.am-grid,.rules-grid,.faq-list{padding-left:30px;padding-right:30px}
   .quick-grid{padding:22px 30px 0}
+  .ess-card{margin:16px 30px 0}
   .villa-main-img{height:300px}
   .hero-title{font-size:32px !important}
   .sec-title{font-size:30px !important}
@@ -70,13 +82,18 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 
 @media(min-width:768px){
   :root{--max:700px}
-  .hero{height:360px}
+  .hero{height:600px}
+  .hero-logo{font-size:46px}
   .pcard-img{height:190px}
   .feat-card{height:240px;margin:0 26px 14px}
   .grid2{padding:0 26px}
   .grid-card{height:170px}
+  .explore-grid{padding:0 26px 10px}
+  .explore-grid .feat-card{height:390px}
+  .explore-stack .grid-card{height:190px}
   .place-list,.info-list,.itin-list,.video-grid,.gal-grid,.am-grid,.rules-grid,.faq-list{padding-left:26px;padding-right:26px}
   .quick-grid{padding:20px 26px 0}
+  .ess-card{margin:16px 26px 0}
   .villa-main-img{height:280px}
   .hero-title{font-size:clamp(20px,4vw,30px) !important}
 }
@@ -116,7 +133,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .lbb-arr{display:none}
 .lbb-fr{box-shadow:0 8px 24px rgba(0,0,0,.5)}
 .lbb-en{box-shadow:0 8px 24px rgba(0,0,0,.5)}
-.hero{height:260px;position:relative;overflow:hidden;flex-shrink:0;width:100%}
+.hero{height:440px;position:relative;overflow:hidden;flex-shrink:0;width:100%}
 .hero-slides{display:flex;height:100%;width:100%;transition:transform .6s cubic-bezier(.4,0,.2,1)}
 .hero-slide{min-width:100%;width:100%;height:100%;position:relative;flex-shrink:0;overflow:hidden}
 .hero-slide img{width:100%;height:100%;object-fit:cover;display:block}
@@ -125,18 +142,24 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .3s;cursor:pointer}
 .hero-dot.active{background:#fff;width:18px;border-radius:3px}
 .hero-top{position:absolute;top:0;left:0;right:0;padding:46px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;z-index:4}
-.hero-logo{color:#fff;font-family:var(--font-head);font-size:21px;font-weight:700;line-height:1.15;text-shadow:0 2px 10px rgba(0,0,0,.4)}
-.hero-logo small{display:block;font-family:var(--font-body);font-size:11px;font-weight:400;opacity:.8;margin-top:2px}
-.hero-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 18px 34px;z-index:4}
+.hero-logo{color:#fff;font-family:var(--font-head);font-size:34px;font-weight:700;line-height:1.1;letter-spacing:.2px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.hero-logo small{display:block;font-family:var(--font-body);font-size:13px;font-weight:400;opacity:.85;margin-top:5px}
+.hero-top-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.hero-quote{color:rgba(255,255,255,.92);font-family:var(--font-head);font-style:italic;font-size:14px;line-height:1.5;text-align:right;text-shadow:0 2px 10px rgba(0,0,0,.35);max-width:170px}
+.hero-tags{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.hero-tags span{color:rgba(255,255,255,.85);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hero-bottom{position:absolute;bottom:0;left:0;right:0;padding:0 20px 52px;z-index:4}
 .hero-title{font-family:var(--font-head);color:#fff;font-size:18px;font-weight:700;text-shadow:0 2px 14px rgba(0,0,0,.5)}
 .hero-sub{color:rgba(255,255,255,.8);font-size:12px;margin-top:3px}
 .lang-toggle{display:flex;background:rgba(255,255,255,.14);border-radius:50px;border:1px solid rgba(255,255,255,.28);overflow:hidden}
 .lang-opt{padding:5px 10px;font-size:11px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s}
 .lang-opt.active{background:rgba(255,255,255,.25);color:#fff}
-.pill-nav{background:var(--accent);border-radius:50px;margin:-20px 16px 0;padding:5px;display:flex;position:relative;z-index:10;box-shadow:0 8px 26px rgba(27,108,168,.4);flex-shrink:0}
-.pill-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px;border-radius:50px;cursor:pointer;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap}
-.pill-item.active{background:rgba(255,255,255,.22);color:#fff}
-.pill-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pill-nav{background:var(--card);border-radius:26px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
+.pill-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 2px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:11px;font-weight:600;transition:all .2s;white-space:nowrap}
+.pill-item.active{color:var(--text)}
+.pill-ico{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
+.pill-item.active .pill-ico{background:var(--accent);color:#fff}
+.pill-item svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ph{height:170px;position:relative;overflow:hidden;flex-shrink:0;width:100%}
 .ph img{width:100%;height:100%;object-fit:cover}
 .ph-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,22,40,.2),rgba(10,22,40,.78))}
@@ -153,6 +176,14 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .q-ico{font-size:24px;margin-bottom:5px}
 .q-label{font-size:14px;color:var(--muted);font-weight:500;margin-bottom:2px}
 .q-val{font-size:18px;font-weight:700;color:var(--accent)}
+.sec-head .see-all{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);cursor:pointer;white-space:nowrap}
+.ess-card{margin:14px 18px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);display:grid;grid-template-columns:repeat(4,1fr);box-shadow:0 2px 12px rgba(27,108,168,.06)}
+.ess-item{padding:14px 4px;text-align:center;border-left:1px solid var(--border)}
+.ess-item:first-child{border-left:none}
+.ess-ico{color:var(--accent);margin-bottom:6px;display:flex;justify-content:center}
+.ess-ico svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ess-label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+.ess-val{font-size:14px;font-weight:700;color:var(--text)}
 .feat-card{margin:0 18px 10px;border-radius:var(--r);overflow:hidden;position:relative;height:178px;cursor:pointer}
 .feat-card img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .feat-card:active img{transform:scale(1.03)}
@@ -167,6 +198,12 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .grid-card:active img{transform:scale(1.04)}
 .grid-card .cov{background:linear-gradient(160deg,rgba(10,22,40,.6) 0%,rgba(10,22,40,.05) 65%)}
 .grid-card .clabel{font-family:var(--font-body);font-size:16px;font-weight:700}
+.explore-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px 10px}
+.explore-grid .feat-card{margin:0;height:266px}
+.explore-stack{display:flex;flex-direction:column;gap:10px}
+.explore-stack .grid-card{margin:0;height:128px;flex:1}
+.card-arrow{position:absolute;bottom:12px;right:12px;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:#fff}
+.card-arrow svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .info-list{padding:0 18px;display:flex;flex-direction:column;gap:9px}
 .info-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 10px rgba(27,108,168,.06);cursor:pointer;transition:transform .15s;text-decoration:none;color:inherit}
 .info-card:active{transform:scale(.98)}
@@ -341,14 +378,20 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .hero{height:160px !important}
   .ph{height:110px !important}
   .hero-title{font-size:22px !important}
-  .pill-nav{margin:-14px 12px 0}
+  .pill-nav{margin:-18px 12px 0}
   .hero-top{padding:28px 14px 0}
-  .hero-bottom{padding:0 14px 20px}
+  .hero-bottom{padding:0 14px 30px}
   .hero-logo{font-size:14px}
   .hero-logo small{font-size:9px}
   .quick-grid{grid-template-columns:repeat(4,1fr);padding:10px 14px 0;gap:7px}
   .q-card{padding:8px 6px}
   .q-ico{font-size:16px;margin-bottom:2px}
+  .ess-card{margin:8px 14px 0}
+  .ess-item{padding:8px 4px}
+  .explore-grid{padding:0 14px 6px;gap:7px}
+  .explore-grid .feat-card{height:130px}
+  .explore-stack{gap:7px}
+  .explore-stack .grid-card{height:61px}
   .spb{padding-bottom:calc(64px + var(--safe))}
   .bottom-nav{padding:5px 0 calc(5px + var(--safe))}
   .bnav-item svg{width:18px;height:18px}
@@ -420,7 +463,15 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     <div class="hero-dots" id="hero-dots"></div>
     <div class="hero-top">
       <div class="hero-logo"><span id="h-name">P'tit Bouchon</span><small id="h-tagline">Villa face à la mer · Île Maurice</small></div>
-      <div class="lang-toggle"><div class="lang-opt active" onclick="setLang('fr')">FR</div><div class="lang-opt" onclick="setLang('en')">EN</div></div>
+      <div class="hero-top-right">
+        <div class="lang-toggle"><div class="lang-opt active" onclick="setLang('fr')">FR</div><div class="lang-opt" onclick="setLang('en')">EN</div></div>
+        <div class="hero-quote t" data-fr="Ici, le temps prend une autre allure." data-en="Here, time takes on a different pace.">Ici, le temps prend une autre allure.</div>
+        <div class="hero-tags">
+          <span class="t" data-fr="Mer" data-en="Sea">Mer</span>
+          <span class="t" data-fr="Nature" data-en="Nature">Nature</span>
+          <span class="t" data-fr="Partage" data-en="Sharing">Partage</span>
+        </div>
+      </div>
     </div>
     <div class="hero-bottom">
       <div class="hero-title t" data-fr="Bienvenue" data-en="Welcome">Bienvenue</div>
@@ -428,16 +479,17 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     </div>
   </div>
   <div class="pill-nav">
-    <div class="pill-item active" onclick="homeTab(0)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span class="t" data-fr="Explorer" data-en="Explore">Explorer</span></div>
-    <div class="pill-item" onclick="homeTab(1)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="t" data-fr="Contact" data-en="Contact">Contact</span></div>
-    <div class="pill-item" onclick="homeTab(2)"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="t" data-fr="La Villa" data-en="The Villa">La Villa</span></div>
+    <div class="pill-item active" onclick="homeTab(0)"><div class="pill-ico"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><span class="t" data-fr="Explorer" data-en="Explore">Explorer</span></div>
+    <div class="pill-item" onclick="homeTab(1)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><span class="t" data-fr="Contact" data-en="Contact">Contact</span></div>
+    <div class="pill-item" onclick="homeTab(2)"><div class="pill-ico"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="t" data-fr="La Villa" data-en="The Villa">La Villa</span></div>
   </div>
   <div class="scroll spb" id="tab-0">
-    <div class="quick-grid">
-      <div class="q-card"><div class="q-ico">🕗</div><div class="q-label t" data-fr="Check-in" data-en="Check-in">Check-in</div><div class="q-val" id="q-ci">08:00</div></div>
-      <div class="q-card"><div class="q-ico">🕙</div><div class="q-label t" data-fr="Check-out" data-en="Check-out">Check-out</div><div class="q-val" id="q-co">11:00</div></div>
-      <div class="q-card"><div class="q-ico">👥</div><div class="q-label t" data-fr="Capacité" data-en="Capacity">Capacité</div><div class="q-val">6 pers.</div></div>
-      <div class="q-card"><div class="q-ico">✈️</div><div class="q-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="q-val">8 min</div></div>
+    <div class="sec-head"><div class="sec-title t" data-fr="Vos essentiels" data-en="Your essentials">Vos essentiels</div></div>
+    <div class="ess-card">
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-in" data-en="Check-in">Check-in</div><div class="ess-val" id="q-ci">08:00</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="ess-label t" data-fr="Check-out" data-en="Check-out">Check-out</div><div class="ess-val" id="q-co">11:00</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="ess-label t" data-fr="Voyageurs" data-en="Guests">Voyageurs</div><div class="ess-val">6</div></div>
+      <div class="ess-item"><div class="ess-ico"><svg viewBox="0 0 24 24"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div class="ess-label t" data-fr="Aéroport" data-en="Airport">Aéroport</div><div class="ess-val">8 min</div></div>
     </div>
     <div id="home-cats-grid"></div>
     <div class="sec-head"><div class="sec-title t" data-fr="Infos Pratiques" data-en="Practical Info">Infos Pratiques</div></div>
@@ -1259,9 +1311,6 @@ function applyTheme() {
   set('--border', s.cardBorderColor);
   if (s.fontFamily) root.style.setProperty('--font-head', s.fontFamily);
   if (s.bodyFont) root.style.setProperty('--font-body', s.bodyFont);
-  if (s.accentColor) {
-    document.querySelectorAll('.pill-nav').forEach(el => el.style.background = s.accentColor);
-  }
   if (s.footerBg) {
     document.querySelectorAll('.bottom-nav').forEach(el => el.style.background = s.footerBg);
   }
@@ -1304,6 +1353,18 @@ function applyCatHeaderImages() {
   });
 }
 
+const CAT_SUBS = {
+  restaurants:{fr:'Saveurs locales',en:'Local flavors'},
+  plages:{fr:'Lagons & évasion',en:'Lagoons & escape'},
+  supermarches:{fr:'Courses & essentiels',en:'Groceries & essentials'},
+  boulangeries:{fr:'Pain frais & pâtisseries',en:'Fresh bread & pastries'},
+  activites:{fr:'Sensations & plein air',en:'Thrills & outdoors'},
+  voir:{fr:'Panoramas & culture',en:'Views & culture'},
+  taxi:{fr:'Déplacements faciles',en:'Easy transport'},
+  atm:{fr:'Retraits & change',en:'Cash & exchange'},
+  essence:{fr:'Stations & carburant',en:'Fuel stations'},
+};
+const CARD_ARROW = '<div class="card-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>';
 function renderHomeCats() {
   const el = document.getElementById('home-cats-grid');
   if (!el) return;
@@ -1322,14 +1383,24 @@ function renderHomeCats() {
   const visible = order.filter(id => defs[id]);
   const secTitleFr = (D.settings && D.settings.sectionTitleFr) || 'Gastronomie & Sorties';
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
-  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div></div>`;
-  if (visible[0]) {
-    const c = defs[visible[0]];
-    const cat = getCat(visible[0]);
-    const count = cat ? cat.items.length : '';
-    html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${count} ${T('adresses recommandées', 'recommended spots')}</div><div class="clabel">${c.icon} ${T(c.fr, c.en)}</div>${count ? `<div class="cbadge">${count}</div>` : ''}</div>`;
+  const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
+  let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
+  const first = visible.slice(0, 3);
+  if (first.length) {
+    html += '<div class="explore-grid">';
+    if (first[0]) {
+      const c = defs[first[0]];
+      html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(first[0])}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+    }
+    html += '<div class="explore-stack">';
+    [first[1], first[2]].forEach(id => {
+      if (!id) return;
+      const c = defs[id];
+      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+    });
+    html += '</div></div>';
   }
-  const rest = visible.slice(1);
+  const rest = visible.slice(3);
   for (let i = 0; i < rest.length; i += 2) {
     html += '<div class="grid2" style="margin-bottom:10px">';
     [rest[i], rest[i+1]].forEach(id => {
