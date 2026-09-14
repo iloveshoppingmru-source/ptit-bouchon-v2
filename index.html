@@ -50,7 +50,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .am-grid{padding:0 22px}
   .rules-grid{padding:0 22px}
   .faq-list{padding:0 22px}
-  .villa-txt{padding:4px 22px 18px;font-size:14px}
+  .villa-txt{padding:4px 22px 18px;font-size:var(--checkin-font-size,14px)}
   .back-bar{padding:14px 22px 6px}
   .back-btn{font-size:14px;padding:10px 20px}
   .wifi-box{margin:18px 22px 0}
@@ -235,8 +235,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .info-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .info-icon svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2}
 .ic-blue{background:var(--accent)}.ic-dark{background:var(--dark)}.ic-coral{background:#e05a2b}.ic-green{background:#2e7d52}.ic-purple{background:#7b5ea7}.ic-amber{background:#e09000}
-.info-text h3{font-size:calc(var(--checkin-font-size,14px) + 3px);font-weight:600;color:var(--dark)}
-.info-text p{font-size:var(--checkin-font-size,14px);color:var(--muted);margin-top:2px}
+.info-text h3{font-size:17px;font-weight:600;color:var(--dark)}
+.info-text p{font-size:14px;color:var(--muted);margin-top:2px}
 .info-chev{margin-left:auto;color:var(--muted);font-size:18px;flex-shrink:0}
 .wifi-box{margin:16px 18px 0;background:linear-gradient(135deg,var(--dark),var(--accent));border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .wifi-box h3{font-size:11px;color:rgba(255,255,255,.7);font-weight:500;margin-bottom:3px}
@@ -274,16 +274,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .trio-grid>.pcard-big .pcard-img-wrap{flex:1;min-height:0}
 .trio-grid>.pcard-big .pcard-img,.trio-grid>.pcard-big .pcard-nophoto{height:100%}
 .trio-grid .pcard-img,.trio-grid .pcard-nophoto{height:110px}
-.trio-grid .pcard-name{font-size:calc(var(--place-name-size,20px) - 6px)}
-.trio-grid .pcard-desc{font-size:11px;-webkit-line-clamp:2}
-.trio-grid .pcard-meta{font-size:9px;gap:6px;padding:4px 8px 0}
-.trio-grid .pcard-body{padding:6px 8px 2px}
-.trio-grid .pcard-foot{padding:5px 8px 5px;gap:4px;flex-wrap:wrap}
-.trio-grid .btn-map,.trio-grid .btn-tel,.trio-grid .btn-vid{font-size:10px;padding:5px 8px}
-.trio-grid .pcard-rating{padding:2px 8px 6px}
-.trio-grid .rate-star{font-size:12px}
-.trio-grid .pcard-fav{width:26px;height:26px;font-size:12px;top:6px;right:6px}
-.trio-grid .btn-more{font-size:11px;padding:0 8px 6px}
+.trio-grid .pcard-desc{-webkit-line-clamp:2}
 .rental-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:0 18px 11px;box-shadow:0 2px 10px rgba(27,108,168,.07)}
 .rental-img{width:100%;height:130px;object-fit:cover;display:block}
 .rental-img-ph{width:100%;height:130px;background:linear-gradient(135deg,#eef5ff,#c8dff5);display:flex;align-items:center;justify-content:center;font-size:36px}
@@ -314,7 +305,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .v-thumb{flex:0 0 72px;width:72px;height:54px;border-radius:9px;overflow:hidden;cursor:pointer;border:2.5px solid transparent;transition:border-color .2s;background:#ddeeff}
 .v-thumb.active{border-color:var(--accent)}
 .v-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.villa-txt{padding:4px 18px 16px;font-size:17px;line-height:1.95;color:var(--text);white-space:pre-line}
+.villa-txt{padding:4px 18px 16px;font-size:calc(var(--checkin-font-size,14px) + 3px);line-height:1.95;color:var(--text);white-space:pre-line}
 .am-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 18px}
 .am-item{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:14px 16px;display:flex;align-items:center;gap:12px;font-size:17px;font-weight:500}
 .am-item span:first-child{font-size:26px;flex-shrink:0}
@@ -465,11 +456,11 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .am-item{font-size:15px !important}
   .itin-txt{font-size:15px !important}
   .faq-a{font-size:14px !important}
-  .villa-txt{font-size:15px !important}
+  .villa-txt{font-size:calc(var(--checkin-font-size,14px) + 1px) !important}
   .q-val{font-size:16px !important}
   .q-label{font-size:12px !important}
-  .info-text h3{font-size:calc(var(--checkin-font-size,14px) + 2px) !important}
-  .info-text p{font-size:calc(var(--checkin-font-size,14px) - 1px) !important}
+  .info-text h3{font-size:15px !important}
+  .info-text p{font-size:13px !important}
   .sec-title{font-size:27px !important}
   .itin-name{font-size:16px !important}
   .itin-time{font-size:14px !important}
@@ -485,7 +476,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .pcard-name{font-size:calc(var(--place-name-size,20px) - 4px) !important}
   .am-item{font-size:14px !important}
   .itin-txt{font-size:14px !important}
-  .villa-txt{font-size:14px !important}
+  .villa-txt{font-size:var(--checkin-font-size,14px) !important}
   .q-val{font-size:15px !important}
   .sec-title{font-size:26px !important}
 }
@@ -1651,8 +1642,8 @@ function renderCheckin() {
   el.innerHTML = D.checkin.instructions.map(inst => `
     <div class="info-card" style="cursor:default;align-items:flex-start">
       <div style="font-size:36px;flex-shrink:0">${inst.icon}</div>
-      <div><h3 style="font-size:22px;font-weight:700;margin-bottom:10px">${T(inst.titleFr, inst.titleEn)}</h3>
-      <p style="font-size:20px;color:var(--muted);line-height:2;white-space:pre-line">${T(inst.textFr, inst.textEn)}</p></div>
+      <div><h3 style="font-size:calc(var(--checkin-font-size,14px) + 8px);font-weight:700;margin-bottom:10px">${T(inst.titleFr, inst.titleEn)}</h3>
+      <p style="font-size:calc(var(--checkin-font-size,14px) + 6px);color:var(--muted);line-height:2;white-space:pre-line">${T(inst.textFr, inst.textEn)}</p></div>
     </div>`).join('');
 }
 
