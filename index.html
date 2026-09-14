@@ -178,6 +178,9 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ph-toolbar{display:flex;justify-content:flex-end;padding:12px 18px 0;flex-shrink:0}
 .carte-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--dark);padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(10,22,40,.08)}
 .carte-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ph-brand{display:none}
+.ph-quote{display:none}
+.ph-toolbar{display:none}
 .back-bar{display:flex;align-items:center;padding:12px 16px 4px;flex-shrink:0;background:var(--bg)}
 .back-btn{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--accent);padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);box-shadow:0 2px 8px rgba(27,108,168,.1);transition:all .15s}
 .back-btn:active{transform:scale(.97)}
@@ -1532,24 +1535,33 @@ function renderHomeCats() {
     const c = defs.restaurants;
     html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub('restaurants')}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
   }
-  const PREFERRED_REST = ['plages', 'supermarches', '__deco__', 'voir', 'activites', 'boulangeries'];
-  const rest = [];
-  PREFERRED_REST.forEach(id => {
-    if (id === '__deco__') { rest.push(null); return; }
-    if (visible.includes(id)) rest.push(id);
+  const PREFERRED_BEFORE = ['plages', 'supermarches', '__deco__', 'voir', 'activites'];
+  const before = [];
+  PREFERRED_BEFORE.forEach(id => {
+    if (id === '__deco__') { before.push(null); return; }
+    if (visible.includes(id)) before.push(id);
   });
-  visible.forEach(id => {
-    if (id === 'restaurants' || PREFERRED_REST.includes(id)) return;
-    rest.push(id);
-  });
-  for (let i = 0; i < rest.length; i += 2) {
-    html += '<div class="grid2" style="margin-bottom:10px">';
-    [rest[i], rest[i + 1]].forEach(id => {
-      if (!id) { html += '<div class="grid-card grid-card-deco"></div>'; return; }
+  const renderGridRow = (a, b) => {
+    let row = '<div class="grid2" style="margin-bottom:10px">';
+    [a, b].forEach(id => {
+      if (id === null) { row += '<div class="grid-card grid-card-deco"></div>'; return; }
+      if (id === undefined) { return; }
       const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+      row += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
     });
-    html += '</div>';
+    row += '</div>';
+    return row;
+  };
+  for (let i = 0; i < before.length; i += 2) {
+    html += renderGridRow(before[i], before[i + 1]);
+  }
+  if (visible.includes('boulangeries')) {
+    const c = defs.boulangeries;
+    html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub('boulangeries')}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+  }
+  const rest = visible.filter(id => id !== 'restaurants' && id !== 'boulangeries' && !PREFERRED_BEFORE.includes(id));
+  for (let i = 0; i < rest.length; i += 2) {
+    html += renderGridRow(rest[i], rest[i + 1]);
   }
   el.innerHTML = html;
 }
