@@ -15,10 +15,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Bodoni+Moda:ital,wght@0,500;0,600;0,700;1,500&family=GFS+Didot&family=Cormorant+Garamond:wght@500;600;700&family=Mrs+Saint+Delafield&family=Homemade+Apple&family=Italianno&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;height:100dvh;overflow:hidden;background:#e8eef5}
+html,body{height:100%;height:100dvh;overflow:hidden;background:var(--outer-bg,#e0e8f0)}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
-:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
-#app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:#e0e8f0}
+:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--accent2:#c1714a;--outer-bg:#e0e8f0;--nav-bg:var(--card);--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
+#app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
 
 @media(min-width:600px){
   #admin-app .admin-scroll{padding:20px 24px}
@@ -153,7 +153,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .lang-toggle{display:flex;background:rgba(255,255,255,.14);border-radius:50px;border:1px solid rgba(255,255,255,.28);overflow:hidden}
 .lang-opt{padding:5px 10px;font-size:11px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s}
 .lang-opt.active{background:rgba(255,255,255,.25);color:#fff}
-.pill-nav{background:var(--card);border-radius:999px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
+.pill-nav{background:var(--nav-bg,var(--card));border-radius:999px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
 .pill-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
 .pill-item:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:26px;background:var(--border)}
 .pill-item.active{color:var(--text)}
@@ -211,7 +211,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ccount{position:absolute;top:9px;right:9px;background:rgba(27,108,168,.85);backdrop-filter:blur(6px);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:50px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
 .grid-card{border-radius:var(--r);overflow:hidden;position:relative;height:128px;cursor:pointer}
-.grid-card-deco{background:#c1714a;cursor:default}
+.grid-card-deco{background:var(--accent2,#c1714a);cursor:default}
 .trio-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .grid-card img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
 .grid-card:active img{transform:scale(1.04)}
@@ -236,7 +236,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .wifi-box h3{font-size:11px;color:rgba(255,255,255,.7);font-weight:500;margin-bottom:3px}
 .wifi-val{font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px}
 .wifi-copy{background:rgba(255,255,255,.2);border:none;color:#fff;padding:7px 14px;border-radius:50px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-body)}
-.place-list{padding:0 18px;display:flex;flex-direction:column;gap:11px;margin-top:14px}
+.place-list{padding:0 18px;display:flex;flex-direction:column;gap:11px;margin-top:22px}
 .pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(10,22,40,.06)}
 .pcard-img-wrap{position:relative}
 .pcard-img{width:100%;height:148px;object-fit:cover;background:var(--border);display:block}
@@ -255,7 +255,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .pcard-meta{display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px 2px;font-size:13px;color:var(--muted)}
 .pcard-meta span{display:flex;align-items:center;gap:5px}
 .pcard-foot{display:flex;gap:7px;padding:9px 14px 6px;flex-wrap:wrap;align-items:center}
-.btn-map{display:inline-flex;align-items:center;gap:5px;background:#c1714a;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
+.btn-map{display:inline-flex;align-items:center;gap:5px;background:var(--accent2,#c1714a);color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
 .btn-tel{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--dark);text-decoration:none;font-size:13px;font-weight:700;padding:8px 15px;border-radius:50px;background:var(--card)}
 .btn-vid{display:inline-flex;align-items:center;gap:5px;background:#fff0eb;color:#e05a2b;border:1px solid #ffd0c0;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
 .btn-more{background:none;border:none;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;padding:0 14px 11px;font-family:var(--font-body)}
@@ -1254,7 +1254,7 @@ function setRating(id, stars) {
 
 // ── PLACE CARD ──
 const ICON_CAR = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>';
-const ICON_COIN = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9a2 2 0 0 0-1.8-1H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg>';
+const ICON_COIN = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.2"/><path d="M6 6v12M18 6v12"/></svg>';
 const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
 const ICON_MAP = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
 const ICON_PHONE = '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
@@ -1468,10 +1468,13 @@ function applyTheme() {
   const root = document.documentElement;
   const set = (k, v) => v && root.style.setProperty(k, v);
   set('--accent', s.accentColor);
+  set('--accent2', s.accent2Color);
   set('--bg', s.bodyBg);
   set('--text', s.bodyText);
   set('--card', s.cardBg);
   set('--border', s.cardBorderColor);
+  set('--outer-bg', s.outerBg);
+  set('--nav-bg', s.navBg);
   if (s.fontFamily) root.style.setProperty('--font-head', s.fontFamily);
   if (s.bodyFont) root.style.setProperty('--font-body', s.bodyFont);
   if (s.footerBg) {
@@ -1602,17 +1605,16 @@ function renderHomeCats() {
     const s2 = visible.includes('supermarches') ? 'supermarches' : null;
     html += trioRow('restaurants', s1, s2, true);
   }
-  const usedInTrio1 = new Set(['restaurants', 'plages', 'supermarches']);
-  const beforeRest = ['__deco__', 'voir', 'activites'].map(x => x === '__deco__' ? null : x).filter(id => id === null || visible.includes(id));
+  const beforeRest = ['__deco__', 'voir'].map(x => x === '__deco__' ? null : x).filter(id => id === null || visible.includes(id));
   for (let i = 0; i < beforeRest.length; i += 2) {
     html += pairRow(beforeRest[i], beforeRest[i + 1]);
   }
   if (visible.includes('boulangeries')) {
-    const s1 = visible.includes('taxi') ? 'taxi' : null;
-    const s2 = visible.includes('atm') ? 'atm' : null;
+    const s1 = visible.includes('activites') ? 'activites' : null;
+    const s2 = visible.includes('taxi') ? 'taxi' : null;
     html += trioRow('boulangeries', s1, s2, false);
   }
-  const usedAll = new Set(['restaurants', 'plages', 'supermarches', 'voir', 'activites', 'boulangeries', 'taxi', 'atm']);
+  const usedAll = new Set(['restaurants', 'plages', 'supermarches', 'voir', 'activites', 'boulangeries', 'taxi']);
   const rest2 = visible.filter(id => !usedAll.has(id));
   for (let i = 0; i < rest2.length; i += 2) {
     html += pairRow(rest2[i], rest2[i + 1]);
@@ -1951,10 +1953,15 @@ function aVisual(el) {
   el.innerHTML = `
   <div class="a-sec"><h3>🎨 Couleurs principales</h3>
     ${cRow('accentColor','Couleur accent (boutons, liens)','#1b6ca8')}
+    ${cRow('accent2Color','Couleur secondaire (bouton Carte, carré déco)','#c1714a')}
     ${cRow('bodyBg','Fond de l\'app (background)','#f4f8fd')}
     ${cRow('bodyText','Texte principal','#0d1f35')}
     ${cRow('cardBg','Fond des cartes','#ffffff')}
-    ${cRow('cardBorderColor','Bordure des cartes','#dde8f5')}
+    ${cRow('cardBorderColor','Bordure des cartes (séparateurs)','#dde8f5')}
+    ${cRow('outerBg','Fond extérieur (autour de l\'app)','#e0e8f0')}
+  </div>
+  <div class="a-sec"><h3>🔝 Menu du haut</h3>
+    ${cRow('navBg','Fond du menu (Accueil / Découvrir...)','#fffcf5')}
   </div>
   <div class="a-sec"><h3>🔝 Header</h3>
     ${cRow('headerBg','Fond du header (admin)','#0a1628')}
