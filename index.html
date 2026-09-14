@@ -17,7 +17,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden;background:var(--outer-bg,#e0e8f0)}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
-:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--accent2:#c1714a;--outer-bg:#e0e8f0;--nav-bg:var(--card);--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
+:root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--accent2:#c1714a;--outer-bg:#e0e8f0;--nav-bg:var(--card);--video-accent:#e05a2b;--place-name-size:20px;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
 #app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
 
 @media(min-width:600px){
@@ -110,6 +110,12 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 #s-home.screen.active::-webkit-scrollbar{display:none}
 #s-home .hero,#s-home .pill-nav{flex-shrink:0}
 #s-home .scroll{flex:none;overflow-y:visible;height:auto}
+/* Category screens (Restaurants, Plages, etc.): scroll the banner photo together
+   with the card list below, instead of pinning the banner and only scrolling the list. */
+#s-restaurants.screen.active,#s-plages.screen.active,#s-supermarches.screen.active,#s-boulangeries.screen.active,#s-activites.screen.active,#s-voir.screen.active,#s-atm.screen.active,#s-essence.screen.active,#s-taxi.screen.active{overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+#s-restaurants.screen.active::-webkit-scrollbar,#s-plages.screen.active::-webkit-scrollbar,#s-supermarches.screen.active::-webkit-scrollbar,#s-boulangeries.screen.active::-webkit-scrollbar,#s-activites.screen.active::-webkit-scrollbar,#s-voir.screen.active::-webkit-scrollbar,#s-atm.screen.active::-webkit-scrollbar,#s-essence.screen.active::-webkit-scrollbar,#s-taxi.screen.active::-webkit-scrollbar{display:none}
+#s-restaurants .ph2,#s-plages .ph2,#s-supermarches .ph2,#s-boulangeries .ph2,#s-activites .ph2,#s-voir .ph2,#s-atm .ph2,#s-essence .ph2,#s-taxi .ph2{flex-shrink:0}
+#s-restaurants .scroll,#s-plages .scroll,#s-supermarches .scroll,#s-boulangeries .scroll,#s-activites .scroll,#s-voir .scroll,#s-atm .scroll,#s-essence .scroll,#s-taxi .scroll{flex:none;overflow-y:visible;height:auto}
 #lang-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:#0a1628}
 .ls-bg{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;z-index:0;display:none}
 .ls-bg img{width:100%;height:100%;object-fit:cover;display:block}
@@ -245,7 +251,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .pcard-fav:active{transform:scale(1.2)}
 .pcard-body{padding:12px 14px 4px}
 .pcard-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
-.pcard-name{font-size:20px;font-weight:700;flex:1;font-family:var(--font-head);color:var(--dark)}
+.pcard-name{font-size:var(--place-name-size,20px);font-weight:700;flex:1;font-family:var(--font-head);color:var(--dark)}
 .fav-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0;transition:transform .2s}
 .fav-btn:active{transform:scale(1.3)}
 .pcard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
@@ -257,7 +263,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .pcard-foot{display:flex;gap:7px;padding:9px 14px 6px;flex-wrap:wrap;align-items:center}
 .btn-map{display:inline-flex;align-items:center;gap:5px;background:var(--accent2,#c1714a);color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
 .btn-tel{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--dark);text-decoration:none;font-size:13px;font-weight:700;padding:8px 15px;border-radius:50px;background:var(--card)}
-.btn-vid{display:inline-flex;align-items:center;gap:5px;background:#fff0eb;color:#e05a2b;border:1px solid #ffd0c0;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
+.btn-vid{display:inline-flex;align-items:center;gap:5px;background:#fff0eb;color:var(--video-accent,#e05a2b);border:1px solid #ffd0c0;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
+.btn-vid{background:color-mix(in srgb, var(--video-accent,#e05a2b) 10%, white);border-color:color-mix(in srgb, var(--video-accent,#e05a2b) 30%, white)}
 .btn-more{background:none;border:none;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;padding:0 14px 11px;font-family:var(--font-body)}
 .pcard-rating{display:flex;gap:4px;padding:4px 14px 12px}
 .rate-star{font-size:18px;cursor:pointer;color:#ddd;transition:color .15s}
@@ -267,12 +274,12 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .trio-grid>.pcard-big .pcard-img-wrap{flex:1;min-height:0}
 .trio-grid>.pcard-big .pcard-img,.trio-grid>.pcard-big .pcard-nophoto{height:100%}
 .trio-grid .pcard-img,.trio-grid .pcard-nophoto{height:110px}
-.trio-grid .pcard-name{font-size:14px}
+.trio-grid .pcard-name{font-size:calc(var(--place-name-size,20px) - 6px)}
 .trio-grid .pcard-desc{font-size:11px;-webkit-line-clamp:2}
 .trio-grid .pcard-meta{font-size:9px;gap:6px;padding:4px 8px 0}
 .trio-grid .pcard-body{padding:6px 8px 2px}
 .trio-grid .pcard-foot{padding:5px 8px 5px;gap:4px;flex-wrap:wrap}
-.trio-grid .btn-map,.trio-grid .btn-tel{font-size:10px;padding:5px 8px}
+.trio-grid .btn-map,.trio-grid .btn-tel,.trio-grid .btn-vid{font-size:10px;padding:5px 8px}
 .trio-grid .pcard-rating{padding:2px 8px 6px}
 .trio-grid .rate-star{font-size:12px}
 .trio-grid .pcard-fav{width:26px;height:26px;font-size:12px;top:6px;right:6px}
@@ -453,7 +460,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 
 @media(min-width:600px){
   .pcard-desc{font-size:15px !important}
-  .pcard-name{font-size:17px !important}
+  .pcard-name{font-size:calc(var(--place-name-size,20px) - 3px) !important}
   .tag{font-size:12px !important}
   .am-item{font-size:15px !important}
   .itin-txt{font-size:15px !important}
@@ -475,7 +482,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 }
 @media(min-width:768px){
   .pcard-desc{font-size:14px !important}
-  .pcard-name{font-size:16px !important}
+  .pcard-name{font-size:calc(var(--place-name-size,20px) - 4px) !important}
   .am-item{font-size:14px !important}
   .itin-txt{font-size:14px !important}
   .villa-txt{font-size:14px !important}
@@ -1475,6 +1482,8 @@ function applyTheme() {
   set('--border', s.cardBorderColor);
   set('--outer-bg', s.outerBg);
   set('--nav-bg', s.navBg);
+  set('--video-accent', s.videoAccentColor);
+  if (s.placeNameFontSize) root.style.setProperty('--place-name-size', s.placeNameFontSize + 'px');
   if (s.fontFamily) root.style.setProperty('--font-head', s.fontFamily);
   if (s.bodyFont) root.style.setProperty('--font-body', s.bodyFont);
   if (s.footerBg) {
@@ -1959,6 +1968,7 @@ function aVisual(el) {
     ${cRow('cardBg','Fond des cartes','#ffffff')}
     ${cRow('cardBorderColor','Bordure des cartes (séparateurs)','#dde8f5')}
     ${cRow('outerBg','Fond extérieur (autour de l\'app)','#e0e8f0')}
+    ${cRow('videoAccentColor','Couleur du bouton Vidéo','#e05a2b')}
   </div>
   <div class="a-sec"><h3>🔝 Menu du haut</h3>
     ${cRow('navBg','Fond du menu (Accueil / Découvrir...)','#fffcf5')}
@@ -1988,6 +1998,7 @@ function aVisual(el) {
       <div class="a-field"><label>Taille titre hero (px)</label><input type="number" value="${s.heroFontSize || 27}" min="18" max="52" onchange="D.settings.heroFontSize=+this.value;saveData();applyTheme()"></div>
       <div class="a-field"><label>Taille sous-titre hero (px)</label><input type="number" value="${s.heroSubFontSize || 13}" min="8" max="24" onchange="D.settings.heroSubFontSize=+this.value;saveData();applyTheme()"></div>
       <div class="a-field"><label>Taille titres sections (px)</label><input type="number" value="${s.cardFontSize || 19}" min="14" max="32" onchange="D.settings.cardFontSize=+this.value;saveData();applyTheme()"></div>
+      <div class="a-field"><label>Taille nom des lieux (px)</label><input type="number" value="${s.placeNameFontSize || 20}" min="12" max="28" onchange="D.settings.placeNameFontSize=+this.value;saveData();applyTheme()"></div>
     </div>
   </div>
   <button class="btn-save" onclick="saveData();renderAll();showSaved(this)">💾 Appliquer le thème</button>`;
