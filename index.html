@@ -212,6 +212,9 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
 .grid-card{border-radius:var(--r);overflow:hidden;position:relative;height:128px;cursor:pointer}
 .grid-card-deco{background:#c1714a;cursor:default}
+.trio-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.trio-grid>.feat-card{grid-row:span 2;margin:0;height:auto}
+.trio-grid>.grid-card{margin:0;height:auto}
 .grid-card img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
 .grid-card:active img{transform:scale(1.04)}
 .grid-card .cov{background:linear-gradient(160deg,rgba(10,22,40,.6) 0%,rgba(10,22,40,.05) 65%)}
@@ -261,6 +264,21 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .pcard-rating{display:flex;gap:4px;padding:4px 14px 12px}
 .rate-star{font-size:18px;cursor:pointer;color:#ddd;transition:color .15s}
 .rate-star.active{color:#ffc107}
+.trio-grid>.pcard{margin:0;display:flex;flex-direction:column}
+.trio-grid>.pcard-big{grid-row:span 2}
+.trio-grid>.pcard-big .pcard-img-wrap{flex:1;min-height:0}
+.trio-grid>.pcard-big .pcard-img,.trio-grid>.pcard-big .pcard-nophoto{height:100%}
+.trio-grid .pcard-img,.trio-grid .pcard-nophoto{height:110px}
+.trio-grid .pcard-name{font-size:14px}
+.trio-grid .pcard-desc{font-size:11px;-webkit-line-clamp:2}
+.trio-grid .pcard-meta{font-size:9px;gap:6px;padding:4px 8px 0}
+.trio-grid .pcard-body{padding:6px 8px 2px}
+.trio-grid .pcard-foot{padding:5px 8px 5px;gap:4px;flex-wrap:wrap}
+.trio-grid .btn-map,.trio-grid .btn-tel{font-size:10px;padding:5px 8px}
+.trio-grid .pcard-rating{padding:2px 8px 6px}
+.trio-grid .rate-star{font-size:12px}
+.trio-grid .pcard-fav{width:26px;height:26px;font-size:12px;top:6px;right:6px}
+.trio-grid .btn-more{font-size:11px;padding:0 8px 6px}
 .rental-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:0 18px 11px;box-shadow:0 2px 10px rgba(27,108,168,.07)}
 .rental-img{width:100%;height:130px;object-fit:cover;display:block}
 .rental-img-ph{width:100%;height:130px;background:linear-gradient(135deg,#eef5ff,#c8dff5);display:flex;align-items:center;justify-content:center;font-size:36px}
@@ -1242,7 +1260,7 @@ const ICON_COIN = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="curre
 const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
 const ICON_MAP = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
 const ICON_PHONE = '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
-function pcard(item, icon, categoryId) {
+function pcard(item, icon, categoryId, big) {
   const id = item.id || uid();
   const name = T(item.nameFr, item.nameEn) || '';
   const desc = T(item.descFr, item.descEn) || '';
@@ -1258,7 +1276,7 @@ function pcard(item, icon, categoryId) {
     item.openHours ? `<span>${ICON_CLOCK} ${item.openHours.substring(0, 32)}${item.openHours.length > 32 ? '…' : ''}</span>` : ''
   ].filter(Boolean).join('');
   const pid = 'pc' + uid();
-  return `<div class="pcard">
+  return `<div class="pcard${big ? ' pcard-big' : ''}">
     <div class="pcard-img-wrap">
       ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
       <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
@@ -1280,6 +1298,27 @@ function pcard(item, icon, categoryId) {
       ${[1,2,3,4,5].map(n => `<span class="rate-star${rating >= n ? ' active' : ''}" data-id="${id}" onclick="setRating('${id}',${n})">★</span>`).join('')}
     </div>
   </div>`;
+}
+// Renders a list of items as alternating masonry trios (1 tall card + 2 stacked small cards),
+// with any leftover 1-2 items (not a multiple of 3) rendered as normal full-width cards.
+function renderPlaceList(items, icon, cid) {
+  let html = '';
+  let i = 0;
+  let groupIdx = 0;
+  while (i + 3 <= items.length) {
+    const bigLeft = groupIdx % 2 === 0;
+    const bigHtml = pcard(items[i], icon, cid, true);
+    const s1 = pcard(items[i + 1], icon, cid, false);
+    const s2 = pcard(items[i + 2], icon, cid, false);
+    html += `<div class="trio-grid">${bigLeft ? bigHtml + s1 + s2 : s1 + bigHtml + s2}</div>`;
+    i += 3;
+    groupIdx++;
+  }
+  while (i < items.length) {
+    html += pcard(items[i], icon, cid, false);
+    i++;
+  }
+  return html;
 }
 function toggleDesc(id, btn) {
   const el = document.getElementById(id);
@@ -1338,7 +1377,7 @@ function renderAll() {
   ];
   catMap.forEach(([cid, eid, icon]) => {
     const el = document.getElementById(eid); const cat = getCat(cid);
-    if (el && cat) el.innerHTML = cat.items.map(it => pcard(it, icon, cid)).join('');
+    if (el && cat) el.innerHTML = renderPlaceList(cat.items, icon, cid);
   });
   renderVideos();
   renderItins();
@@ -1531,40 +1570,57 @@ function renderHomeCats() {
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
   let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
-  if (visible.includes('restaurants')) {
-    const c = defs.restaurants;
-    html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub('restaurants')}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
-  }
-  const PREFERRED_BEFORE = ['plages', 'supermarches', '__deco__', 'voir', 'activites'];
-  const before = [];
-  PREFERRED_BEFORE.forEach(id => {
-    if (id === '__deco__') { before.push(null); return; }
-    if (visible.includes(id)) before.push(id);
-  });
-  const renderGridRow = (a, b) => {
+  const smallTile = id => {
+    const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
+    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+  };
+  const bigTile = id => {
+    const c = defs[id];
+    return `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+  };
+  const trioTile = id => {
+    const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
+    return `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+  };
+  const trioRow = (bigId, s1, s2, bigLeft) => {
+    const bigHtml = bigTile(bigId);
+    const s1Html = s1 ? trioTile(s1) : '<div class="grid-card grid-card-deco"></div>';
+    const s2Html = s2 ? trioTile(s2) : '<div class="grid-card grid-card-deco"></div>';
+    return `<div class="trio-grid">${bigLeft ? bigHtml + s1Html + s2Html : s1Html + bigHtml + s2Html}</div>`;
+  };
+  const pairRow = (a, b) => {
     let row = '<div class="grid2" style="margin-bottom:10px">';
     [a, b].forEach(id => {
       if (id === null) { row += '<div class="grid-card grid-card-deco"></div>'; return; }
       if (id === undefined) { return; }
-      const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-      row += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+      row += smallTile(id);
     });
     row += '</div>';
     return row;
   };
-  for (let i = 0; i < before.length; i += 2) {
-    html += renderGridRow(before[i], before[i + 1]);
+  if (visible.includes('restaurants')) {
+    const s1 = visible.includes('plages') ? 'plages' : null;
+    const s2 = visible.includes('supermarches') ? 'supermarches' : null;
+    html += trioRow('restaurants', s1, s2, true);
+  }
+  const usedInTrio1 = new Set(['restaurants', 'plages', 'supermarches']);
+  const beforeRest = ['__deco__', 'voir', 'activites'].map(x => x === '__deco__' ? null : x).filter(id => id === null || visible.includes(id));
+  for (let i = 0; i < beforeRest.length; i += 2) {
+    html += pairRow(beforeRest[i], beforeRest[i + 1]);
   }
   if (visible.includes('boulangeries')) {
-    const c = defs.boulangeries;
-    html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub('boulangeries')}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+    const s1 = visible.includes('taxi') ? 'taxi' : null;
+    const s2 = visible.includes('atm') ? 'atm' : null;
+    html += trioRow('boulangeries', s1, s2, false);
   }
-  const rest = visible.filter(id => id !== 'restaurants' && id !== 'boulangeries' && !PREFERRED_BEFORE.includes(id));
-  for (let i = 0; i < rest.length; i += 2) {
-    html += renderGridRow(rest[i], rest[i + 1]);
+  const usedAll = new Set(['restaurants', 'plages', 'supermarches', 'voir', 'activites', 'boulangeries', 'taxi', 'atm']);
+  const rest2 = visible.filter(id => !usedAll.has(id));
+  for (let i = 0; i < rest2.length; i += 2) {
+    html += pairRow(rest2[i], rest2[i + 1]);
   }
   el.innerHTML = html;
 }
+
 
 function renderCheckin() {
   const el = document.getElementById('checkin-instr');
