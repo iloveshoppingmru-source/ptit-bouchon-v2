@@ -164,6 +164,20 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ph img{width:100%;height:100%;object-fit:cover}
 .ph-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,22,40,.2),rgba(10,22,40,.78))}
 .ph-title{position:absolute;bottom:14px;left:16px;color:#fff;font-family:var(--font-head);font-size:24px;font-weight:700}
+.ph2{height:260px}
+.ph-back{position:absolute;top:16px;left:16px;z-index:5;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);border:none;color:var(--dark);padding:9px 16px 9px 12px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);box-shadow:0 4px 14px rgba(10,22,40,.18)}
+.ph-back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.ph-brand{position:absolute;top:18px;left:0;right:0;z-index:4;display:flex;align-items:center;justify-content:center;gap:6px}
+.ph-brand svg{width:18px;height:18px;fill:#c1714a;flex-shrink:0}
+.ph-brand-name{font-family:var(--font-head);font-size:18px;font-weight:700;color:#fff;line-height:1.1;text-shadow:0 2px 8px rgba(0,0,0,.35)}
+.ph-brand-sub{font-size:8px;font-weight:600;letter-spacing:2px;color:rgba(255,255,255,.8);margin-top:1px}
+.ph-quote{position:absolute;top:58px;right:16px;z-index:4;color:rgba(255,255,255,.92);font-family:'Homemade Apple',cursive;font-size:13px;line-height:1.35;text-align:right;max-width:130px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ph-bottom{position:absolute;bottom:16px;left:18px;right:18px;z-index:4}
+.ph-title2{color:#fff;font-family:var(--font-head);font-size:36px;font-weight:700;line-height:1.05;text-shadow:0 2px 10px rgba(0,0,0,.3)}
+.ph-sub2{color:rgba(255,255,255,.92);font-size:14px;margin-top:4px;text-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ph-toolbar{display:flex;justify-content:flex-end;padding:12px 18px 0;flex-shrink:0}
+.carte-btn{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--dark);padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(10,22,40,.08)}
+.carte-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .back-bar{display:flex;align-items:center;padding:12px 16px 4px;flex-shrink:0;background:var(--bg)}
 .back-btn{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);color:var(--accent);padding:9px 18px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);box-shadow:0 2px 8px rgba(27,108,168,.1);transition:all .15s}
 .back-btn:active{transform:scale(.97)}
@@ -219,21 +233,26 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .wifi-val{font-size:20px;font-weight:700;color:#fff;letter-spacing:.5px}
 .wifi-copy{background:rgba(255,255,255,.2);border:none;color:#fff;padding:7px 14px;border-radius:50px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-body)}
 .place-list{padding:0 18px;display:flex;flex-direction:column;gap:11px}
-.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(27,108,168,.07)}
-.pcard-img{width:100%;height:148px;object-fit:cover;background:#ddeeff;display:block}
-.pcard-nophoto{width:100%;height:148px;background:linear-gradient(135deg,#ddeeff,#b8d4f0);display:flex;align-items:center;justify-content:center;font-size:40px}
-.pcard-body{padding:12px 14px 8px}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(10,22,40,.06)}
+.pcard-img-wrap{position:relative}
+.pcard-img{width:100%;height:148px;object-fit:cover;background:var(--border);display:block}
+.pcard-nophoto{width:100%;height:148px;background:linear-gradient(135deg,#f0e8d8,#e2d3b6);display:flex;align-items:center;justify-content:center;font-size:40px}
+.pcard-fav{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);border:none;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(10,22,40,.18);transition:transform .2s}
+.pcard-fav:active{transform:scale(1.2)}
+.pcard-body{padding:12px 14px 4px}
 .pcard-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
-.pcard-name{font-size:20px;font-weight:700;flex:1}
+.pcard-name{font-size:20px;font-weight:700;flex:1;font-family:var(--font-head);color:var(--dark)}
 .fav-btn{background:none;border:none;font-size:20px;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0;transition:transform .2s}
 .fav-btn:active{transform:scale(1.3)}
 .pcard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
 .tag{background:#eef5ff;color:var(--accent);font-size:14px;font-weight:600;padding:6px 13px;border-radius:50px}
 .pcard-desc{font-size:17px;color:var(--muted);line-height:1.75;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .pcard-desc.open{-webkit-line-clamp:unset;overflow:visible}
-.pcard-foot{display:flex;gap:7px;padding:7px 14px 6px;flex-wrap:wrap;align-items:center}
-.btn-map{display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
-.btn-tel{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--accent);text-decoration:none;font-size:13px;font-weight:700;padding:8px 15px;border-radius:50px;background:var(--card)}
+.pcard-meta{display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px 2px;font-size:13px;color:var(--muted)}
+.pcard-meta span{display:flex;align-items:center;gap:5px}
+.pcard-foot{display:flex;gap:7px;padding:9px 14px 6px;flex-wrap:wrap;align-items:center}
+.btn-map{display:inline-flex;align-items:center;gap:5px;background:#c1714a;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
+.btn-tel{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border);color:var(--dark);text-decoration:none;font-size:13px;font-weight:700;padding:8px 15px;border-radius:50px;background:var(--card)}
 .btn-vid{display:inline-flex;align-items:center;gap:5px;background:#fff0eb;color:#e05a2b;border:1px solid #ffd0c0;text-decoration:none;font-size:15px;font-weight:700;padding:10px 18px;border-radius:50px}
 .btn-more{background:none;border:none;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;padding:0 14px 11px;font-family:var(--font-body)}
 .pcard-rating{display:flex;gap:4px;padding:4px 14px 12px}
@@ -538,57 +557,137 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 
 
 <div class="screen" id="s-restaurants">
-  <div class="ph"><img id="ph-img-restaurants" src="https://voilahotel.mu/media/5yfhwzvq/lcr-dining.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🍽️ Restaurants" data-en="🍽️ Restaurants">🍽️ Restaurants</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="restaurants">
+    <img id="ph-img-restaurants" src="https://voilahotel.mu/media/5yfhwzvq/lcr-dining.jpg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Restaurants" data-en="Restaurants">Restaurants</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-restaurants" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-restaurants"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-plages">
-  <div class="ph"><img id="ph-img-plages" src="https://www.paxnouvelles.com/storage/app/uploads/public/59f/0a1/f06/thumb_56269_1200_1_0_0_auto.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🏖️ Plages" data-en="🏖️ Beaches">🏖️ Plages</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="plages">
+    <img id="ph-img-plages" src="https://www.paxnouvelles.com/storage/app/uploads/public/59f/0a1/f06/thumb_56269_1200_1_0_0_auto.jpg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Plages" data-en="Beaches">Plages</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-plages" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-plages"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-supermarches">
-  <div class="ph"><img id="ph-img-supermarches" src="https://live.staticflickr.com/4137/4886682532_b29722fd6b_c.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🛒 Supermarchés" data-en="🛒 Supermarkets">🛒 Supermarchés</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="supermarches">
+    <img id="ph-img-supermarches" src="https://live.staticflickr.com/4137/4886682532_b29722fd6b_c.jpg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Supermarchés" data-en="Supermarkets">Supermarchés</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-supermarches" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-supermarches"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-boulangeries">
-  <div class="ph"><img id="ph-img-boulangeries" src="https://cdn-i2.starofservice.com/images/annubis/services/service-de-patisserie.webp" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🥐 Boulangeries" data-en="🥐 Bakeries">🥐 Boulangeries</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="boulangeries">
+    <img id="ph-img-boulangeries" src="https://cdn-i2.starofservice.com/images/annubis/services/service-de-patisserie.webp" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Boulangeries" data-en="Bakeries">Boulangeries</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-boulangeries" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-boulangeries"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-activites">
-  <div class="ph"><img id="ph-img-activites" src="https://toursmauritius.mu/wp-content/uploads/2018/07/header-lion-safari.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🤿 Activités" data-en="🤿 Activities">🤿 Activités</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="activites">
+    <img id="ph-img-activites" src="https://toursmauritius.mu/wp-content/uploads/2018/07/header-lion-safari.jpg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Activités" data-en="Activities">Activités</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-activites" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-activites"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-voir">
-  <div class="ph"><img id="ph-img-voir" src="https://mauritiusnow.com/wp-content/uploads/2023/06/Underwater-waterfall-Le-Morne-Mauritius.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="👁️ Endroits à Voir" data-en="👁️ Places to See">👁️ Endroits à Voir</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="voir">
+    <img id="ph-img-voir" src="https://mauritiusnow.com/wp-content/uploads/2023/06/Underwater-waterfall-Le-Morne-Mauritius.jpg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Endroits à Voir" data-en="Places to See">Endroits à Voir</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-voir" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-voir"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-atm">
-  <div class="ph"><img id="ph-img-atm" src="https://i0.wp.com/maurice-info.mu/wp-content/uploads/2025/09/Un-ATM-de-la-MCB.jpg?fit=1024%2C577&ssl=1" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🏧 ATM" data-en="🏧 ATM">🏧 ATM</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="atm">
+    <img id="ph-img-atm" src="https://i0.wp.com/maurice-info.mu/wp-content/uploads/2025/09/Un-ATM-de-la-MCB.jpg?fit=1024%2C577&ssl=1" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="ATM" data-en="ATM">ATM</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-atm" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-atm"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-essence">
-  <div class="ph"><img id="ph-img-essence" src="https://www.shell.mu/motorists/inside-our-stations/_jcr_content/root/metadata.shellimg.jpeg/1716449461042/shell-station.jpeg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="⛽ Stations Essence" data-en="⛽ Gas Stations">⛽ Stations Essence</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="essence">
+    <img id="ph-img-essence" src="https://www.shell.mu/motorists/inside-our-stations/_jcr_content/root/metadata.shellimg.jpeg/1716449461042/shell-station.jpeg" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Stations Essence" data-en="Gas Stations">Stations Essence</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-essence" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb"><div class="place-list" id="list-essence"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
@@ -625,8 +724,18 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <div class="screen" id="s-taxi">
-  <div class="ph"><img id="ph-img-taxi" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🚗 Taxi & Location" data-en="🚗 Taxi & Car Rental">🚗 Taxi & Location</div></div>
-  <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
+  <div class="ph ph2" data-cat="taxi">
+    <img id="ph-img-taxi" src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80" alt="">
+    <div class="ph-grad"></div>
+    <button class="ph-back" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button>
+    <div class="ph-brand"><div><div class="ph-brand-name">P'tit Bouchon</div><div class="ph-brand-sub">ÎLE MAURICE</div></div></div>
+    <div class="ph-quote"></div>
+    <div class="ph-bottom">
+      <div class="ph-title2 t" data-fr="Taxi & Location" data-en="Taxi & Car Rental">Taxi & Location</div>
+      <div class="ph-sub2"></div>
+    </div>
+  </div>
+  <div class="ph-toolbar"><a id="map-btn-taxi" href="#" target="_blank" class="carte-btn"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Carte</a></div>
   <div class="scroll spb">
     <div class="sec-head"><div class="sec-title t" data-fr="🚕 Taxis" data-en="🚕 Taxis">🚕 Taxis</div></div>
     <div id="taxi-list"></div>
@@ -1125,6 +1234,11 @@ function setRating(id, stars) {
 }
 
 // ── PLACE CARD ──
+const ICON_CAR = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>';
+const ICON_COIN = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9a2 2 0 0 0-1.8-1H11a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg>';
+const ICON_CLOCK = '<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>';
+const ICON_MAP = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+const ICON_PHONE = '<svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
 function pcard(item, icon, categoryId) {
   const id = item.id || uid();
   const name = T(item.nameFr, item.nameEn) || '';
@@ -1135,26 +1249,28 @@ function pcard(item, icon, categoryId) {
   const safeImg = (item.image || '').replace(/'/g, "\\'");
   const safeCat = (categoryId || '').replace(/'/g, "\\'");
   const clickTrack = `logItemClick('${id}','${safeName}','${safeCat}')`;
-  const tags = [
-    item.distance ? `<span class="tag">📍 ${item.distance}</span>` : '',
-    item.priceLevel ? `<span class="tag">💰 ${item.priceLevel.substring(0, 30)}</span>` : '',
-    item.openHours ? `<span class="tag">🕐 ${item.openHours.substring(0, 32)}${item.openHours.length > 32 ? '…' : ''}</span>` : ''
+  const meta = [
+    item.distance ? `<span>${ICON_CAR} ${item.distance}</span>` : '',
+    item.priceLevel ? `<span>${ICON_COIN} ${item.priceLevel.substring(0, 30)}</span>` : '',
+    item.openHours ? `<span>${ICON_CLOCK} ${item.openHours.substring(0, 32)}${item.openHours.length > 32 ? '…' : ''}</span>` : ''
   ].filter(Boolean).join('');
   const pid = 'pc' + uid();
   return `<div class="pcard">
-    ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
+    <div class="pcard-img-wrap">
+      ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
+      <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
+    </div>
     <div class="pcard-body">
       <div class="pcard-head">
         <div class="pcard-name">${name}</div>
-        <button class="fav-btn" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
       </div>
-      ${tags ? `<div class="pcard-tags">${tags}</div>` : ''}
       ${desc ? `<div class="pcard-desc" id="${pid}">${desc}</div>` : ''}
       ${desc.length > 130 ? `<button class="btn-more" onclick="toggleDesc('${pid}',this);${clickTrack}">${T('Lire plus ▾', 'Read more ▾')}</button>` : ''}
+      ${meta ? `<div class="pcard-meta">${meta}</div>` : ''}
     </div>
     <div class="pcard-foot">
-      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map" onclick="${clickTrack}">🗺️ ${T('Google Maps', 'Google Maps')}</a>` : ''}
-      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel" onclick="${clickTrack}">📞 ${item.phone}</a>` : ''}
+      ${item.mapLink ? `<a href="${item.mapLink}" target="_blank" class="btn-map" onclick="${clickTrack}">${ICON_MAP} ${T('Google Maps', 'Google Maps')}</a>` : ''}
+      ${item.phone ? `<a href="tel:${item.phone}" class="btn-tel" onclick="${clickTrack}">${ICON_PHONE} ${item.phone}</a>` : ''}
       ${item.videoLink ? `<a href="${item.videoLink}" target="_blank" class="btn-vid">▶ Vidéo</a>` : ''}
     </div>
     <div class="pcard-rating">
@@ -1197,6 +1313,7 @@ function renderAll() {
   applyTheme();
   applyLangScreen();
   applyCatHeaderImages();
+  applyCatHeaders();
   buildSlider();
   renderHomeCats();
   renderCheckin();
@@ -1301,7 +1418,7 @@ function applySettings() {
   const emEl = document.getElementById('cta-em'); if (emEl) emEl.href = 'mailto:' + (s.email || '');
   const lat = s.villaLat || '-20.4310', lng = s.villaLng || '57.6659';
   const mu = s.mapLink || ('https://maps.google.com/?q=' + lat + ',' + lng);
-  ['map-btn-h','map-btn-ci'].forEach(id => { const e = document.getElementById(id); if (e) e.href = mu; });
+  ['map-btn-h','map-btn-ci','map-btn-restaurants','map-btn-plages','map-btn-supermarches','map-btn-boulangeries','map-btn-activites','map-btn-voir','map-btn-taxi','map-btn-atm','map-btn-essence'].forEach(id => { const e = document.getElementById(id); if (e) e.href = mu; });
   document.getElementById('wifi-name-d').textContent = (D.checkin && D.checkin.wifiName) || '';
   document.getElementById('wifi-pass-d').textContent = (D.checkin && D.checkin.wifiPass) || '';
 }
@@ -1370,6 +1487,26 @@ const CAT_SUBS = {
   atm:{fr:'Retraits & change',en:'Cash & exchange'},
   essence:{fr:'Stations & carburant',en:'Fuel stations'},
 };
+const CAT_QUOTES = {
+  restaurants:{fr:'Bien manger,<br>c\'est aussi<br>découvrir l\'île.',en:'Eating well<br>is also about<br>discovering the island.'},
+  plages:{fr:'Le sable chaud,<br>l\'eau turquoise,<br>rien d\'autre.',en:'Warm sand,<br>turquoise water,<br>nothing else.'},
+  supermarches:{fr:'Tout pour<br>bien profiter<br>de la villa.',en:'Everything to<br>fully enjoy<br>the villa.'},
+  boulangeries:{fr:'Le pain chaud<br>du matin,<br>une tradition.',en:'Warm bread<br>every morning,<br>a tradition.'},
+  activites:{fr:'L\'aventure<br>commence à<br>quelques pas.',en:'Adventure<br>starts just<br>steps away.'},
+  voir:{fr:'Des vues<br>à ne pas<br>manquer.',en:'Views<br>not to be<br>missed.'},
+  taxi:{fr:'Se déplacer,<br>en toute<br>simplicité.',en:'Getting around,<br>made<br>simple.'},
+  atm:{fr:'Du liquide<br>à portée<br>de main.',en:'Cash<br>within<br>reach.'},
+  essence:{fr:'Le plein,<br>sans<br>détour.',en:'Fill up,<br>no detour<br>needed.'},
+};
+const ICON_LEAF = '<svg viewBox="0 0 24 24"><path d="M12 2C7 2 3 6 3 12c0 5 4 10 9 10s9-5 9-10C21 6 17 2 12 2z"/></svg>';
+function applyCatHeaders() {
+  document.querySelectorAll('.ph2[data-cat]').forEach(ph => {
+    const cid = ph.getAttribute('data-cat');
+    const s = CAT_SUBS[cid]; const q = CAT_QUOTES[cid];
+    const subEl = ph.querySelector('.ph-sub2'); if (subEl && s) subEl.innerHTML = T(s.fr, s.en);
+    const qEl = ph.querySelector('.ph-quote'); if (qEl && q) qEl.innerHTML = T(q.fr, q.en);
+  });
+}
 const CARD_ARROW = '<div class="card-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>';
 function renderHomeCats() {
   const el = document.getElementById('home-cats-grid');
@@ -1391,16 +1528,20 @@ function renderHomeCats() {
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
   let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
-  const bigIds = ['restaurants', 'boulangeries'].filter(id => visible.includes(id));
-  if (bigIds.length) {
-    html += '<div class="explore-grid">';
-    bigIds.forEach(id => {
-      const c = defs[id];
-      html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
-    });
-    html += '</div>';
+  if (visible.includes('restaurants')) {
+    const c = defs.restaurants;
+    html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub('restaurants')}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
   }
-  const rest = visible.filter(id => !bigIds.includes(id));
+  const PREFERRED_REST = ['plages', 'supermarches', '__deco__', 'voir', 'activites', 'boulangeries'];
+  const rest = [];
+  PREFERRED_REST.forEach(id => {
+    if (id === '__deco__') { rest.push(null); return; }
+    if (visible.includes(id)) rest.push(id);
+  });
+  visible.forEach(id => {
+    if (id === 'restaurants' || PREFERRED_REST.includes(id)) return;
+    rest.push(id);
+  });
   for (let i = 0; i < rest.length; i += 2) {
     html += '<div class="grid2" style="margin-bottom:10px">';
     [rest[i], rest[i + 1]].forEach(id => {
