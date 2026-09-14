@@ -142,7 +142,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .hero-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45);transition:all .3s;cursor:pointer}
 .hero-dot.active{background:#fff;width:18px;border-radius:3px}
 .hero-top{position:absolute;top:0;left:0;right:0;padding:calc(42px + var(--safe-top)) 18px 0;display:flex;justify-content:space-between;align-items:flex-start;z-index:5}
-.hero-logo{color:#fff;font-family:var(--font-head);font-size:44px;font-weight:700;line-height:1.1;letter-spacing:.2px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
+.hero-logo{color:#fff;font-family:var(--font-head);font-size:54px;font-weight:700;line-height:1.1;letter-spacing:.2px;text-shadow:0 2px 14px rgba(0,0,0,.4)}
 .hero-logo small{display:block;font-family:'Montserrat',var(--font-body);font-size:13px;font-weight:300;letter-spacing:.3px;opacity:.9;margin-top:5px}
 .hero-quote{position:absolute;bottom:46px;left:20px;color:rgba(255,255,255,.95);font-family:'Homemade Apple',cursive;font-style:normal;font-size:15px;line-height:1.4;text-align:left;text-shadow:0 2px 10px rgba(0,0,0,.35);max-width:220px;z-index:4}
 .hero-tags{position:absolute;bottom:46px;right:22px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;z-index:4}
@@ -194,6 +194,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ccount{position:absolute;top:9px;right:9px;background:rgba(27,108,168,.85);backdrop-filter:blur(6px);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:50px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px}
 .grid-card{border-radius:var(--r);overflow:hidden;position:relative;height:128px;cursor:pointer}
+.grid-card-deco{background:#c1714a;cursor:default}
 .grid-card img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
 .grid-card:active img{transform:scale(1.04)}
 .grid-card .cov{background:linear-gradient(160deg,rgba(10,22,40,.6) 0%,rgba(10,22,40,.05) 65%)}
@@ -1390,28 +1391,22 @@ function renderHomeCats() {
   const secTitleEn = (D.settings && D.settings.sectionTitleEn) || 'Food & Outings';
   const sub = id => { const s = CAT_SUBS[id]; return s ? T(s.fr, s.en) : ''; };
   let html = `<div class="sec-head"><div class="sec-title">${T(secTitleFr, secTitleEn)}</div><div class="see-all" onclick="homeTab(0)">${T('Tout voir','See all')} →</div></div>`;
-  const first = visible.slice(0, 3);
-  if (first.length) {
+  const bigIds = ['restaurants', 'boulangeries'].filter(id => visible.includes(id));
+  if (bigIds.length) {
     html += '<div class="explore-grid">';
-    if (first[0]) {
-      const c = defs[first[0]];
-      html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(first[0])}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
-    }
-    html += '<div class="explore-stack">';
-    [first[1], first[2]].forEach(id => {
-      if (!id) return;
+    bigIds.forEach(id => {
       const c = defs[id];
-      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
+      html += `<div class="feat-card" onclick="go('${c.sc}')"><img src="${c.img}" alt=""><div class="cov"></div><div class="csub">${sub(id)}</div><div class="clabel">${T(c.fr, c.en)}</div>${CARD_ARROW}</div>`;
     });
-    html += '</div></div>';
+    html += '</div>';
   }
-  const rest = visible.slice(3);
+  const rest = visible.filter(id => !bigIds.includes(id));
   for (let i = 0; i < rest.length; i += 2) {
     html += '<div class="grid2" style="margin-bottom:10px">';
-    [rest[i], rest[i+1]].forEach(id => {
-      if (!id) return;
+    [rest[i], rest[i + 1]].forEach(id => {
+      if (!id) { html += '<div class="grid-card grid-card-deco"></div>'; return; }
       const c = defs[id]; const cat = getCat(id); const count = cat ? cat.items.length : '';
-      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${c.icon} ${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
+      html += `<div class="grid-card" onclick="go('${c.sc}')"><img src="${imgW(c.img,480,68)}" alt="" loading="lazy" decoding="async"><div class="cov"></div><div class="clabel">${T(c.fr, c.en)}</div>${count ? `<div class="ccount">${count}</div>` : ''}${CARD_ARROW}</div>`;
     });
     html += '</div>';
   }
