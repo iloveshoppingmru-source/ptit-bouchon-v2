@@ -171,7 +171,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ph-grad{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,22,40,.2),rgba(10,22,40,.78))}
 .ph-title{position:absolute;bottom:14px;left:16px;color:#fff;font-family:var(--font-head);font-size:24px;font-weight:700}
 .ph2{height:260px}
-.ph-back{position:absolute;top:16px;left:16px;z-index:5;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);border:none;color:var(--dark);padding:9px 16px 9px 12px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);box-shadow:0 4px 14px rgba(10,22,40,.18)}
+.ph-back{position:absolute;top:calc(16px + var(--safe-top,0px));left:16px;z-index:5;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.95);border:none;color:var(--dark);padding:9px 16px 9px 12px;border-radius:50px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);box-shadow:0 4px 14px rgba(10,22,40,.18)}
 .ph-back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 .ph-brand{position:absolute;top:18px;left:0;right:0;z-index:4;display:flex;align-items:center;justify-content:center;gap:6px}
 .ph-brand svg{width:18px;height:18px;fill:#c1714a;flex-shrink:0}
@@ -256,7 +256,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .pcard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px}
 .tag{background:#eef5ff;color:var(--accent);font-size:14px;font-weight:600;padding:6px 13px;border-radius:50px}
 .pcard-desc{font-size:17px;color:var(--muted);line-height:1.75;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.pcard-desc.open{-webkit-line-clamp:unset;overflow:visible}
+.pcard-desc.open{-webkit-line-clamp:unset;display:block;overflow:visible}
 .pcard-meta{display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px 2px;font-size:13px;color:var(--muted)}
 .pcard-meta span{display:flex;align-items:center;gap:5px}
 .pcard-foot{display:flex;gap:7px;padding:9px 14px 6px;flex-wrap:wrap;align-items:center}
@@ -1149,6 +1149,29 @@ function goto(id) {
   if (id === 's-home') homeTab(0);
 }
 function back() { if (navStack.length > 1) navStack.pop(); go(navStack[navStack.length - 1]); }
+// ── SWIPE BACK (edge swipe left-to-right, like iOS native back gesture) ──
+(function () {
+  let startX = 0, startY = 0, tracking = false;
+  const EDGE = 30, THRESHOLD = 80, MAX_VERTICAL = 60;
+  document.addEventListener('touchstart', function (e) {
+    if (navStack.length <= 1) { tracking = false; return; }
+    const t = e.touches[0];
+    if (!t || t.clientX > EDGE) { tracking = false; return; }
+    startX = t.clientX;
+    startY = t.clientY;
+    tracking = true;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (!tracking) return;
+    tracking = false;
+    const t = e.changedTouches[0];
+    if (!t) return;
+    const dx = t.clientX - startX;
+    const dy = Math.abs(t.clientY - startY);
+    if (dx > THRESHOLD && dy < MAX_VERTICAL) back();
+  }, { passive: true });
+  document.addEventListener('touchcancel', function () { tracking = false; }, { passive: true });
+})();
 function homeTab(i) {
   document.querySelectorAll('.pill-item').forEach((p, j) => p.classList.toggle('active', j === i));
   [0,1,2,3,4].forEach(j => { const e = document.getElementById('tab-' + j); if (e) e.style.display = j === i ? 'block' : 'none'; });
