@@ -534,6 +534,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       clearTimeout(vvTimer);
       vvTimer = setTimeout(nudgeReflow, 60);
     });
+    window.visualViewport.addEventListener('scroll', function () {
+      clearTimeout(vvTimer);
+      vvTimer = setTimeout(nudgeReflow, 60);
+    });
   }
 })();
 </script>
@@ -1207,6 +1211,7 @@ function go(id) {
   if (el) { el.scrollTop = 0; const sc = el.querySelector('.scroll'); if (sc) sc.scrollTop = 0; }
   trackVisit(id);
   if (id === 's-favs') renderFavs();
+  nudgeReflow();
 }
 function goto(id) {
   navStack = ['s-home', id];
