@@ -2211,6 +2211,24 @@ const TEXT_SCREEN_LABELS = {
   's-favs': '❤️ Favoris', 'global': '📱 Menu du bas & général'
 };
 const TEXT_SCREEN_ORDER = ['s-home','s-restaurants','s-plages','s-supermarches','s-boulangeries','s-activites','s-voir','s-atm','s-essence','s-urgences','s-checkin','s-taxe','s-taxi','s-regles','s-faq','s-favs','global'];
+// Every font actually loaded/used somewhere in the app (see the Google Fonts <link> and --font-head/--font-body),
+// so the "Textes" editor can offer the real fonts already in use instead of a generic elegant/simple pair.
+const FONT_OPTIONS = [
+  { name: 'Système', value: 'var(--font-body)', label: 'Système (texte normal)' },
+  { name: 'Cormorant Garamond', value: 'var(--font-head)', label: 'Cormorant Garamond (titres élégants)' },
+  { name: 'Playfair Display', value: "'Playfair Display',serif", label: 'Playfair Display' },
+  { name: 'Bodoni Moda', value: "'Bodoni Moda',serif", label: 'Bodoni Moda' },
+  { name: 'GFS Didot', value: "'GFS Didot',serif", label: 'GFS Didot' },
+  { name: 'Montserrat', value: "'Montserrat',sans-serif", label: 'Montserrat' },
+  { name: 'Mrs Saint Delafield', value: "'Mrs Saint Delafield',cursive", label: 'Mrs Saint Delafield (manuscrite)' },
+  { name: 'Homemade Apple', value: "'Homemade Apple',cursive", label: 'Homemade Apple (manuscrite)' },
+  { name: 'Italianno', value: "'Italianno',cursive", label: 'Italianno (manuscrite)' }
+];
+function fontLabelFor(cssFamily) {
+  const first = (cssFamily || '').split(',')[0].replace(/["']/g, '').trim();
+  const found = FONT_OPTIONS.find(f => f.name.toLowerCase() === first.toLowerCase());
+  return found ? found.label : (first || 'Système');
+}
 function collectTextItems() {
   const overrides = (D.settings && D.settings.customTexts) || {};
   const seen = {};
@@ -2223,10 +2241,14 @@ function collectTextItems() {
     const defFr = el.getAttribute('data-fr') || '';
     const defEn = el.getAttribute('data-en') || '';
     const ov = overrides[key] || {};
+    const cs = getComputedStyle(el);
+    const curSizePx = Math.round(parseFloat(cs.fontSize)) || 16;
+    const curFontLabel = fontLabelFor(cs.fontFamily);
     (groups[scope] = groups[scope] || []).push({
       key, defFr,
       curFr: ov.fr || '', curEn: ov.en || '',
-      size: ov.size || '', font: ov.font || ''
+      size: ov.size || '', font: ov.font || '',
+      curSizePx, curFontLabel
     });
   });
   return groups;
@@ -2247,12 +2269,12 @@ function aTexts(el) {
           <input value="${escAttr(it.curFr)}" placeholder="${escAttr(it.defFr)}" onchange="setCustomText('${it.key}','fr',this.value)">
           <input value="${escAttr(it.curEn)}" placeholder="English" onchange="setCustomText('${it.key}','en',this.value)">
         </div>
-        <div class="a-row2" style="margin-top:6px">
-          <input type="number" min="8" max="48" value="${it.size}" placeholder="Taille (px)" onchange="setCustomText('${it.key}','size',this.value)">
+        <p style="font-size:11px;color:var(--muted);margin:6px 0 4px">Actuellement : ${it.curFontLabel}, ${it.curSizePx}px</p>
+        <div class="a-row2">
+          <input type="number" min="8" max="48" value="${it.size || it.curSizePx}" onchange="setCustomText('${it.key}','size',this.value)">
           <select onchange="setCustomText('${it.key}','font',this.value)">
-            <option value="" ${!it.font?'selected':''}>Police par défaut</option>
-            <option value="var(--font-body)" ${it.font==='var(--font-body)'?'selected':''}>Simple</option>
-            <option value="var(--font-head)" ${it.font==='var(--font-head)'?'selected':''}>Élégante</option>
+            <option value="" ${!it.font?'selected':''}>Ne pas changer</option>
+            ${FONT_OPTIONS.map(f => `<option value="${escAttr(f.value)}" ${it.font===f.value?'selected':''}>${escHtml(f.label)}</option>`).join('')}
           </select>
         </div>
       </div>`;
@@ -2261,6 +2283,7 @@ function aTexts(el) {
   });
   el.innerHTML = html;
 }
+
 function setCustomText(key, field, value) {
   if (!D.settings.customTexts) D.settings.customTexts = {};
   const ct = D.settings.customTexts[key] || (D.settings.customTexts[key] = {});
