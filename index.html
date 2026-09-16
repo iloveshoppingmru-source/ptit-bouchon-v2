@@ -2248,40 +2248,66 @@ function collectTextItems() {
       key, defFr,
       curFr: ov.fr || '', curEn: ov.en || '',
       size: ov.size || '', font: ov.font || '',
-      curSizePx, curFontLabel
+      curSizePx, curFontLabel, curFontFamily: cs.fontFamily
     });
   });
   return groups;
 }
 function aTexts(el) {
   const groups = collectTextItems();
-  let html = `<div class="a-sec"><h3>📝 Textes de l'interface</h3>
-    <p style="font-size:12px;color:var(--muted);margin:0">Change le texte, la taille ou la police de n'importe quel texte de l'app, écran par écran. Laisse un champ vide pour garder le réglage par défaut.</p>
+  let html = `<div class="a-sec" style="position:sticky;top:0;z-index:5"><h3>📝 Textes de l'interface</h3>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 10px">Change le texte, la taille ou la police de n'importe quel texte de l'app, écran par écran. Laisse un champ vide pour garder le réglage par défaut.</p>
+    <div class="a-field" style="margin:0"><input type="text" placeholder="🔍 Rechercher un texte (ex: Retour, Bienvenue...)" oninput="filterTextItems(this.value)"></div>
   </div>`;
   TEXT_SCREEN_ORDER.forEach(scope => {
     const items = groups[scope];
     if (!items || !items.length) return;
-    html += `<div class="a-sec"><h3>${TEXT_SCREEN_LABELS[scope] || scope}</h3>`;
+    html += `<div class="a-sec" data-scope="${scope}"><h3>${TEXT_SCREEN_LABELS[scope] || scope}</h3>`;
     items.forEach(it => {
-      html += `<div class="a-field" style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px">
+      const fontVal = it.font || it.curFontFamily;
+      html += `<div class="a-field" data-label="${escAttr(it.defFr)}" style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px">
         <label>${escHtml(it.defFr)}</label>
         <div class="a-row2">
-          <input value="${escAttr(it.curFr)}" placeholder="${escAttr(it.defFr)}" onchange="setCustomText('${it.key}','fr',this.value)">
+          <input data-role="fr" value="${escAttr(it.curFr)}" placeholder="${escAttr(it.defFr)}" onchange="setCustomText('${it.key}','fr',this.value);updateTextPreview('${it.key}')" oninput="updateTextPreview('${it.key}')">
           <input value="${escAttr(it.curEn)}" placeholder="English" onchange="setCustomText('${it.key}','en',this.value)">
         </div>
         <p style="font-size:11px;color:var(--muted);margin:6px 0 4px">Actuellement : ${it.curFontLabel}, ${it.curSizePx}px</p>
         <div class="a-row2">
-          <input type="number" min="8" max="48" value="${it.size || it.curSizePx}" onchange="setCustomText('${it.key}','size',this.value)">
-          <select onchange="setCustomText('${it.key}','font',this.value)">
+          <input data-role="size" type="number" min="8" max="48" value="${it.size || it.curSizePx}" onchange="setCustomText('${it.key}','size',this.value);updateTextPreview('${it.key}')" oninput="updateTextPreview('${it.key}')">
+          <select data-role="font" onchange="setCustomText('${it.key}','font',this.value);updateTextPreview('${it.key}')">
             <option value="" ${!it.font?'selected':''}>Ne pas changer</option>
             ${FONT_OPTIONS.map(f => `<option value="${escAttr(f.value)}" ${it.font===f.value?'selected':''}>${escHtml(f.label)}</option>`).join('')}
           </select>
         </div>
+        <div class="font-preview" id="tpv-${it.key}" style="font-family:${escAttr(fontVal)};font-size:${it.size || it.curSizePx}px">${escHtml(it.curFr || it.defFr)}</div>
       </div>`;
     });
     html += '</div>';
   });
   el.innerHTML = html;
+}
+function updateTextPreview(key) {
+  const box = document.getElementById('tpv-' + key);
+  if (!box) return;
+  const row = box.closest('.a-field');
+  const frInput = row.querySelector('input[data-role="fr"]');
+  const sizeInput = row.querySelector('input[data-role="size"]');
+  const fontSelect = row.querySelector('select[data-role="font"]');
+  const fr = (frInput.value || frInput.placeholder || '').trim();
+  box.textContent = fr || '(vide)';
+  box.style.fontSize = (sizeInput.value || 16) + 'px';
+  if (fontSelect.value) box.style.fontFamily = fontSelect.value;
+}
+function filterTextItems(term) {
+  term = (term || '').toLowerCase().trim();
+  document.querySelectorAll('#admin-content .a-field[data-label]').forEach(f => {
+    const match = !term || f.getAttribute('data-label').toLowerCase().includes(term);
+    f.style.display = match ? '' : 'none';
+  });
+  document.querySelectorAll('#admin-content .a-sec[data-scope]').forEach(sec => {
+    const anyVisible = [...sec.querySelectorAll('.a-field')].some(f => f.style.display !== 'none');
+    sec.style.display = (!term || anyVisible) ? '' : 'none';
+  });
 }
 
 function setCustomText(key, field, value) {
