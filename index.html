@@ -1292,7 +1292,7 @@ function buildSlider() {
   const cont = document.getElementById('hero-slides');
   const dots = document.getElementById('hero-dots');
   if (!cont || !dots) return;
-  cont.innerHTML = imgs.map((g, i) => `<div class="hero-slide"><img src="${g.url}" alt="" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}><div class="hero-grad"></div></div>`).join('');
+  cont.innerHTML = imgs.map((g, i) => `<div class="hero-slide"><img src="${g.url}" alt="" style="object-position:${g.imagePos || 'center'}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}><div class="hero-grad"></div></div>`).join('');
   dots.innerHTML = imgs.map((_, i) => `<div class="hero-dot${i === 0 ? ' active' : ''}" onclick="goSlide(${i})"></div>`).join('');
   if (slideTimer) clearInterval(slideTimer);
   slideTimer = setInterval(() => goSlide((slideIdx + 1) % imgs.length), 4000);
@@ -1546,7 +1546,7 @@ function applySettings() {
   if (lsSub) lsSub.textContent = s.tagline || 'Villa face à la mer · Île Maurice';
   if (D.sliderImages && D.sliderImages[0]) {
     const lsImg = document.getElementById('ls-img');
-    if (lsImg) lsImg.src = D.sliderImages[0].url;
+    if (lsImg) { lsImg.src = D.sliderImages[0].url; lsImg.style.objectPosition = D.sliderImages[0].imagePos || 'center'; }
   }
   const wa = s.whatsapp || '23052507300';
   const waEl = document.getElementById('cta-wa'); if (waEl) waEl.href = 'https://wa.me/' + wa.replace(/\D/g, '');
@@ -2131,10 +2131,11 @@ function aSlider(el) {
 function renderSliderHTML() {
   return (D.sliderImages || []).map((g, i) => `
     <div style="display:flex;align-items:center;gap:10px;padding:9px;background:#f8fbff;border:1px solid var(--border);border-radius:9px;margin-bottom:6px">
-      ${g.url ? `<img src="${g.url}" style="width:60px;height:44px;border-radius:7px;object-fit:cover;flex-shrink:0">` : '<div style="width:60px;height:44px;border-radius:7px;background:#ddeeff;flex-shrink:0"></div>'}
+      ${g.url ? `<img src="${g.url}" style="width:60px;height:44px;border-radius:7px;object-fit:cover;flex-shrink:0;object-position:${g.imagePos || 'center'}">` : '<div style="width:60px;height:44px;border-radius:7px;background:#ddeeff;flex-shrink:0"></div>'}
       <div style="flex:1;min-width:0">
         <input value="${(g.caption || '').replace(/"/g, '"')}" placeholder="Légende..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font-body)" onchange="D.sliderImages[${i}].caption=this.value;saveData()">
         <input value="${(g.url || '').replace(/"/g, '"')}" placeholder="URL photo..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--font-body);margin-top:4px" onchange="D.sliderImages[${i}].url=this.value;saveData()">
+        ${g.url ? `<select style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--font-body);margin-top:4px" onchange="D.sliderImages[${i}].imagePos=this.value;saveData();buildSlider();aTab(2)">${posOptions(g.imagePos)}</select>` : ''}
         ${photoUploadBlock('sld-'+i, `D.sliderImages[${i}].url=url;saveData();aTab(2);`)}
       </div>
       <div class="order-btns">
