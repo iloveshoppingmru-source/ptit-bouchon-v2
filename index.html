@@ -346,12 +346,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .stat-bar{height:8px;background:var(--border);border-radius:50px;overflow:hidden}
 .stat-fill{height:100%;background:var(--accent);border-radius:50px;transition:width .6s ease}
 .lb{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.93);align-items:center;justify-content:center}
-.a2hs-banner{display:none;position:absolute;left:12px;right:12px;bottom:calc(90px + min(var(--safe),34px));background:var(--dark);color:#fff;border-radius:16px;padding:12px 14px;align-items:center;gap:10px;z-index:300;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-.a2hs-icon{font-size:24px;flex-shrink:0}
-.a2hs-text{flex:1;display:flex;flex-direction:column;gap:2px;font-size:12px;line-height:1.4}
-.a2hs-text strong{font-size:13px;font-weight:700;font-family:var(--font-head)}
-.a2hs-close{background:rgba(255,255,255,.15);border:none;color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;cursor:pointer;flex-shrink:0;order:3}
-.a2hs-install{background:#fff;color:var(--dark);border:none;padding:8px 14px;border-radius:50px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:var(--font-body)}
 .lb.open{display:flex}
 .lb img{max-width:95vw;max-height:88vh;border-radius:8px;object-fit:contain}
 .lb-x{position:absolute;top:16px;right:18px;color:#fff;font-size:26px;cursor:pointer;background:none;border:none;line-height:1}
@@ -497,6 +491,23 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 // set an inline pixel height from window.innerHeight/visualViewport.height,
 // which could freeze at a stale value on some devices — e.g. iPhone 16 Pro Max —
 // leaving a gap below the bottom nav once Safari's chrome settled).
+// On resume from background (app switcher, screen lock, tab switch), iOS Safari
+// sometimes keeps a stale geometry for fixed-position elements and env(safe-area-*)
+// until something forces a reflow — this can leave the bottom nav gap until the
+// user force-quits and relaunches. Nudge a reflow (no hardcoded dimension, so it
+// can never "freeze" like the reverted fix above) whenever the page becomes visible again.
+(function () {
+  function nudgeReflow() {
+    requestAnimationFrame(function () {
+      var b = document.body;
+      b.style.display = 'none';
+      void b.offsetHeight;
+      b.style.display = '';
+    });
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
+})();
 </script>
 <div id="app-shell"><div id="app">
 <div class="screen active" id="s-home">
@@ -800,15 +811,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     <div class="bnav-item" onclick="goto('s-urgences')"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="t" data-fr="Urgences" data-en="Emergency">Urgences</span></div>
   </div>
 
-  <div class="a2hs-banner" id="a2hs-banner">
-    <button class="a2hs-close" onclick="dismissA2HS()">✕</button>
-    <div class="a2hs-icon">📱</div>
-    <div class="a2hs-text">
-      <strong data-fr="Profitez du plein écran" data-en="Enjoy full screen" class="t">Profitez du plein écran</strong>
-      <span id="a2hs-instructions"></span>
-    </div>
-    <button class="a2hs-install" id="a2hs-install-btn" style="display:none" onclick="installA2HS()"><span class="t" data-fr="Installer" data-en="Install">Installer</span></button>
-  </div>
 </div><!-- /app -->
 <div class="lb" id="lb" onclick="closeLb()"><button class="lb-x">✕</button><img id="lb-img" src="" alt=""></div>
 
@@ -1132,7 +1134,6 @@ let LANG = (function(){ try { return localStorage.getItem('ptb_lang') || ''; } c
 function initLang(l) {
   document.getElementById('lang-screen').style.display = 'none';
   setLang(l);
-  initA2HS();
 }
 function setLang(l) {
   LANG = l; try { localStorage.setItem('ptb_lang', l); } catch(e) {}
@@ -1146,43 +1147,6 @@ function applyTranslations() {
     const v = el.getAttribute('data-' + LANG);
     if (v !== null) el.innerHTML = v;
   });
-}
-// ── ADD TO HOME SCREEN (full-screen prompt for browser visitors) ──
-function isStandaloneMode() {
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
-function isIOSDevice() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-}
-let deferredInstallPrompt = null;
-window.addEventListener('beforeinstallprompt', function (e) {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  const btn = document.getElementById('a2hs-install-btn');
-  if (btn) btn.style.display = 'inline-block';
-});
-function installA2HS() {
-  if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  deferredInstallPrompt.userChoice.finally(function () { deferredInstallPrompt = null; dismissA2HS(); });
-}
-function dismissA2HS() {
-  const el = document.getElementById('a2hs-banner');
-  if (el) el.style.display = 'none';
-  try { localStorage.setItem('ptb_a2hs_dismissed', String(Date.now())); } catch (e) {}
-}
-function initA2HS() {
-  if (isStandaloneMode()) return;
-  let dismissedAt = 0;
-  try { dismissedAt = +(localStorage.getItem('ptb_a2hs_dismissed') || 0); } catch (e) {}
-  if (dismissedAt && (Date.now() - dismissedAt) / 86400000 < 14) return;
-  const el = document.getElementById('a2hs-banner');
-  const instr = document.getElementById('a2hs-instructions');
-  if (!el || !instr) return;
-  instr.innerHTML = isIOSDevice()
-    ? T('Appuyez sur <strong>Partager</strong> ⬆️ puis <strong>« Sur l’écran d’accueil »</strong>', 'Tap <strong>Share</strong> ⬆️ then <strong>“Add to Home Screen”</strong>')
-    : T('Ajoutez cette app à votre écran d’accueil pour l’ouvrir en plein écran', 'Add this app to your home screen to open it full screen');
-  setTimeout(function () { el.style.display = 'flex'; }, 2500);
 }
 
 // ── NAVIGATION ──
@@ -2616,7 +2580,6 @@ var BACKUP_DEFAULTS = {"villaContent": {"contentFr": "Villa P'tit Bouchon - Face
   } else {
     document.getElementById('lang-screen').style.display = 'none';
     renderAll();
-    initA2HS();
   }
 })();
 
