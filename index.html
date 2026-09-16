@@ -846,7 +846,7 @@ window.nudgeReflow = nudgeReflow;
 </div>
 
   <div class="screen" id="s-plats">
-    <div class="ph" style="height:120px"><div class="ph-grad" style="background:linear-gradient(to bottom,var(--dark),rgba(10,22,40,.7))"></div><div class="ph-title t" data-fr="🍽️ Spécialités Locales" data-en="🍽️ Local Specialties">🍽️ Spécialités Locales</div></div>
+    <div class="ph ph2" data-cat="plats"><img id="ph-img-plats" src="https://upload.wikimedia.org/wikipedia/commons/1/11/Plats-varies.jpg"><div class="ph-grad" style="background:linear-gradient(to bottom,var(--dark),rgba(10,22,40,.7))"></div><div class="ph-title t" data-fr="🍽️ Spécialités Locales" data-en="🍽️ Local Specialties">🍽️ Spécialités Locales</div></div>
     <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
     <div class="scroll spb"><div id="plats-container"></div></div>
   </div>
@@ -1691,7 +1691,7 @@ function applyTheme() {
 
 // ── CATEGORY HEADER IMAGES (home tiles + top-of-page photo for each category) ──
 // Editable via the admin "Paramètres" tab (D.catImages); falls back to these defaults.
-const CAT_IMG_LABELS = { restaurants:'🍽️ Restaurants', plages:'🏖️ Plages', supermarches:'🛒 Supermarchés', boulangeries:'🥐 Boulangeries', activites:'🤿 Activités', voir:'👁️ Endroits à Voir', taxi:'🚗 Taxi & Location', atm:'🏧 ATM', essence:'⛽ Stations Essence' };
+const CAT_IMG_LABELS = { restaurants:'🍽️ Restaurants', plages:'🏖️ Plages', supermarches:'🛒 Supermarchés', boulangeries:'🥐 Boulangeries', activites:'🤿 Activités', voir:'👁️ Endroits à Voir', taxi:'🚗 Taxi & Location', atm:'🏧 ATM', essence:'⛽ Stations Essence', plats:'🍽️ Spécialités' };
 const CAT_DEFAULT_IMAGES = {
   restaurants: 'https://voilahotel.mu/media/5yfhwzvq/lcr-dining.jpg',
   plages: 'https://www.paxnouvelles.com/storage/app/uploads/public/59f/0a1/f06/thumb_56269_1200_1_0_0_auto.jpg',
@@ -1701,7 +1701,8 @@ const CAT_DEFAULT_IMAGES = {
   voir: 'https://mauritiusnow.com/wp-content/uploads/2023/06/Underwater-waterfall-Le-Morne-Mauritius.jpg',
   taxi: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&q=80',
   atm: 'https://i0.wp.com/maurice-info.mu/wp-content/uploads/2025/09/Un-ATM-de-la-MCB.jpg?fit=1024%2C577&ssl=1',
-  essence: 'https://www.shell.mu/motorists/inside-our-stations/_jcr_content/root/metadata.shellimg.jpeg/1716449461042/shell-station.jpeg'
+  essence: 'https://www.shell.mu/motorists/inside-our-stations/_jcr_content/root/metadata.shellimg.jpeg/1716449461042/shell-station.jpeg',
+  plats: 'https://upload.wikimedia.org/wikipedia/commons/1/11/Plats-varies.jpg'
 };
 function catImg(id) { return (D.catImages && D.catImages[id]) || CAT_DEFAULT_IMAGES[id]; }
 function applyCatHeaderImages() {
