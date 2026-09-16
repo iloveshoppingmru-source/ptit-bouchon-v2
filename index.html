@@ -2077,23 +2077,43 @@ function aVisual(el) {
   </div>
   <div class="a-sec"><h3>🔤 Polices (Fonts)</h3>
     <div class="a-field"><label>Police des titres</label>
-      <select onchange="D.settings.fontFamily=this.value;saveData();applyTheme()">
+      <select onchange="D.settings.fontFamily=this.value;saveData();applyTheme();document.getElementById('fp-head').style.fontFamily=this.value">
         ${fontOpts('fontFamily',"'Playfair Display', serif",["'Georgia', serif","'Times New Roman', serif","'Palatino', serif","'Baskerville', serif","-apple-system, sans-serif","'Helvetica Neue', sans-serif","'Arial', sans-serif","'Trebuchet MS', sans-serif"])}
       </select>
-      <div class="font-preview" id="fp-head" style="font-family:${s.fontFamily || "'Playfair Display', serif"}">P'tit Bouchon — Aperçu titre</div>
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : le nom "P'tit Bouchon", les titres de section (ex: "Restaurants & Sorties") et les noms des lieux (ex: "Tasty Wave Restaurant & Shop")</p>
+      <div class="font-preview" id="fp-head" style="font-family:${s.fontFamily || "'Playfair Display', serif"}">Tasty Wave Restaurant & Shop</div>
     </div>
     <div class="a-field"><label>Police du corps du texte</label>
-      <select onchange="D.settings.bodyFont=this.value;saveData();applyTheme()">
+      <select onchange="D.settings.bodyFont=this.value;saveData();applyTheme();document.getElementById('fp-body').style.fontFamily=this.value">
         ${fontOpts('bodyFont',"'DM Sans', sans-serif",["-apple-system, sans-serif","'Helvetica Neue', sans-serif","'Arial', sans-serif","'Trebuchet MS', sans-serif","'Verdana', sans-serif","'Georgia', serif","'Palatino', serif","'Courier New', monospace"])}
       </select>
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : le texte général de l'app (descriptions, boutons, adresses...)</p>
       <div class="font-preview" id="fp-body" style="font-family:${s.bodyFont || "'DM Sans', sans-serif"}">Texte du corps — Preview body text</div>
     </div>
-    <div class="a-row2">
-      <div class="a-field"><label>Taille titre hero (px)</label><input type="number" value="${s.heroFontSize || 27}" min="18" max="52" onchange="D.settings.heroFontSize=+this.value;saveData();applyTheme()"></div>
-      <div class="a-field"><label>Taille sous-titre hero (px)</label><input type="number" value="${s.heroSubFontSize || 13}" min="8" max="24" onchange="D.settings.heroSubFontSize=+this.value;saveData();applyTheme()"></div>
-      <div class="a-field"><label>Taille titres sections (px)</label><input type="number" value="${s.cardFontSize || 19}" min="14" max="32" onchange="D.settings.cardFontSize=+this.value;saveData();applyTheme()"></div>
-      <div class="a-field"><label>Taille nom des lieux (px)</label><input type="number" value="${s.placeNameFontSize || 20}" min="12" max="28" onchange="D.settings.placeNameFontSize=+this.value;saveData();applyTheme()"></div>
-      <div class="a-field"><label>Taille texte page Check-in (px)</label><input type="number" value="${s.checkinFontSize || 14}" min="8" max="24" onchange="D.settings.checkinFontSize=+this.value;saveData();applyTheme()"></div>
+    <div class="a-field"><label>Taille titre hero (px)</label>
+      <input type="number" value="${s.heroFontSize || 27}" min="18" max="52" oninput="document.getElementById('fp-hero').style.fontSize=this.value+'px'" onchange="D.settings.heroFontSize=+this.value;saveData();applyTheme()">
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : le mot "Bienvenue" en bas de la photo d'accueil</p>
+      <div class="font-preview" id="fp-hero" style="font-family:${s.fontFamily || "'Playfair Display', serif"};font-size:${s.heroFontSize || 27}px">Bienvenue</div>
+    </div>
+    <div class="a-field"><label>Taille sous-titre hero (px)</label>
+      <input type="number" value="${s.heroSubFontSize || 13}" min="8" max="24" oninput="document.getElementById('fp-herosub').style.fontSize=this.value+'px'" onchange="D.settings.heroSubFontSize=+this.value;saveData();applyTheme()">
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : le petit texte sous "P'tit Bouchon" (ex: "Villa face à la mer · Île Maurice")</p>
+      <div class="font-preview" id="fp-herosub" style="font-size:${s.heroSubFontSize || 13}px">Villa face à la mer · Île Maurice</div>
+    </div>
+    <div class="a-field"><label>Taille titres sections (px)</label>
+      <input type="number" value="${s.cardFontSize || 19}" min="14" max="32" oninput="document.getElementById('fp-card').style.fontSize=this.value+'px'" onchange="D.settings.cardFontSize=+this.value;saveData();applyTheme()">
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : les titres de section (ex: "Restaurants & Sorties", "Infos Pratiques")</p>
+      <div class="font-preview" id="fp-card" style="font-family:${s.fontFamily || "'Playfair Display', serif"};font-size:${s.cardFontSize || 19}px">Restaurants & Sorties</div>
+    </div>
+    <div class="a-field"><label>Taille nom des lieux (px)</label>
+      <input type="number" value="${s.placeNameFontSize || 20}" min="12" max="28" oninput="document.getElementById('fp-place').style.fontSize=this.value+'px'" onchange="D.settings.placeNameFontSize=+this.value;saveData();applyTheme()">
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : le nom de chaque restaurant/plage/etc. (ex: "Tasty Wave Restaurant & Shop")</p>
+      <div class="font-preview" id="fp-place" style="font-family:${s.fontFamily || "'Playfair Display', serif"};font-size:${s.placeNameFontSize || 20}px">Tasty Wave Restaurant & Shop</div>
+    </div>
+    <div class="a-field"><label>Taille texte page Check-in (px)</label>
+      <input type="number" value="${s.checkinFontSize || 14}" min="8" max="24" oninput="document.getElementById('fp-checkin').style.fontSize=this.value+'px'" onchange="D.settings.checkinFontSize=+this.value;saveData();applyTheme()">
+      <p style="font-size:11px;color:var(--muted);margin:6px 0 2px">Affecte : les instructions d'arrivée sur la page Check-in</p>
+      <div class="font-preview" id="fp-checkin" style="font-family:${s.bodyFont || "'DM Sans', sans-serif"};font-size:${s.checkinFontSize || 14}px">Dès que vous êtes en face de la plage, prenez à gauche...</div>
     </div>
   </div>
   <button class="btn-save" onclick="saveData();renderAll();showSaved(this)">💾 Appliquer le thème</button>
