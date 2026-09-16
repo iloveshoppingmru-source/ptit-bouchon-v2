@@ -1153,6 +1153,66 @@ function posOptions(current) {
   ];
   return opts.map(([v,label]) => `<option value="${v}" ${(current||'center')===v?'selected':''}>${label}</option>`).join('');
 }
+
+function parsePosToPercent(raw) {
+  raw = (raw || 'center').toString().trim();
+  const kw = { left: 0, center: 50, right: 100, top: 0, bottom: 100 };
+  let x = 50, y = 50;
+  const parts = raw.split(/\s+/);
+  if (parts.length === 1) {
+    const p = parts[0];
+    if (p.endsWith('%')) { x = y = parseFloat(p); }
+    else if (p === 'left' || p === 'right') { x = kw[p]; y = 50; }
+    else if (p === 'top' || p === 'bottom') { y = kw[p]; x = 50; }
+  } else if (parts.length >= 2) {
+    const p0 = parts[0], p1 = parts[1];
+    x = p0.endsWith('%') ? parseFloat(p0) : (kw.hasOwnProperty(p0) ? kw[p0] : 50);
+    y = p1.endsWith('%') ? parseFloat(p1) : (kw.hasOwnProperty(p1) ? kw[p1] : 50);
+  }
+  if (isNaN(x)) x = 50;
+  if (isNaN(y)) y = 50;
+  return { x: Math.round(x), y: Math.round(y) };
+}
+function posPickerHTML(url, current, updateExpr) {
+  const p = parsePosToPercent(current);
+  return '<div class="pos-picker" data-x="' + p.x + '" data-y="' + p.y + '" data-update="' + updateExpr.replace(/"/g, '&quot;') + '" onpointerdown="posPickerDown(event,this)" style="position:relative;width:100%;max-width:220px;aspect-ratio:16/9;border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:crosshair;touch-action:none;background:#e6eef5">'
+    + (url ? '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;object-position:' + p.x + '% ' + p.y + '%;pointer-events:none;display:block">' : '')
+    + '<div class="pp-handle" style="position:absolute;left:' + p.x + '%;top:' + p.y + '%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:3px solid var(--blue);box-shadow:0 1px 5px rgba(0,0,0,.5);pointer-events:none"></div>'
+    + '<div style="position:absolute;bottom:4px;right:6px;font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:2px 6px;border-radius:6px;pointer-events:none">Glisser pour cadrer</div>'
+    + '</div>';
+}
+let posPickerDrag = null;
+function posPickerDown(e, el) {
+  e.preventDefault();
+  posPickerDrag = el;
+  posPickerMove(e);
+  document.addEventListener('pointermove', posPickerMove);
+  document.addEventListener('pointerup', posPickerUp);
+}
+function posPickerMove(e) {
+  if (!posPickerDrag) return;
+  const rect = posPickerDrag.getBoundingClientRect();
+  let x = ((e.clientX - rect.left) / rect.width) * 100;
+  let y = ((e.clientY - rect.top) / rect.height) * 100;
+  x = Math.max(0, Math.min(100, Math.round(x)));
+  y = Math.max(0, Math.min(100, Math.round(y)));
+  posPickerDrag.dataset.x = x;
+  posPickerDrag.dataset.y = y;
+  const img = posPickerDrag.querySelector('img');
+  if (img) img.style.objectPosition = x + '% ' + y + '%';
+  const handle = posPickerDrag.querySelector('.pp-handle');
+  if (handle) { handle.style.left = x + '%'; handle.style.top = y + '%'; }
+}
+function posPickerUp(e) {
+  if (!posPickerDrag) return;
+  posPickerMove(e);
+  const el = posPickerDrag;
+  const x = el.dataset.x, y = el.dataset.y;
+  document.removeEventListener('pointermove', posPickerMove);
+  document.removeEventListener('pointerup', posPickerUp);
+  posPickerDrag = null;
+  try { new Function('x', 'y', el.dataset.update)(x, y); } catch (err) { console.error(err); }
+}
 // Returns the reusable "📤 Uploader" markup (hidden file input + button + status line) for a photo field.
 // `fieldUid` must be unique per rendered field; `setterJs` is raw JS run with `url` in scope.
 function photoUploadBlock(fieldUid, setterJs) {
@@ -2032,9 +2092,9 @@ function renderCatImagesHTML() {
           <img src="${url}" style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-top:6px;object-position:${(D.catImagePos && D.catImagePos[id]) || 'center'}">
           ${photoUploadBlock('cimg-'+id, `D.catImages=D.catImages||{};D.catImages['${id}']=url;saveData();renderAll();aTab(0);`)}
         </div>
-        <div class="a-field"><label>Cadrage de la photo</label><select onchange="D.catImagePos=D.catImagePos||{};D.catImagePos['${id}']=this.value;saveData();renderAll();aTab(0)">
-          ${posOptions(D.catImagePos && D.catImagePos[id])}
-        </select></div>
+        <div class="a-field"><label>Cadrage de la photo</label>
+          ${posPickerHTML(url, D.catImagePos && D.catImagePos[id], `D.catImagePos=D.catImagePos||{};D.catImagePos['${id}']=x+'% '+y+'%';saveData();renderAll();aTab(0);`)}
+        </div>
         ${isCustom ? `<button class="btn-del" onclick="delete D.catImages['${id}'];saveData();renderAll();aTab(0)">🗑️ Revenir à la photo par défaut</button>` : ''}
       </div></div>`;
   }).join('');
@@ -2149,7 +2209,7 @@ function renderSliderHTML() {
       <div style="flex:1;min-width:0">
         <input value="${(g.caption || '').replace(/"/g, '"')}" placeholder="Légende..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:var(--font-body)" onchange="D.sliderImages[${i}].caption=this.value;saveData()">
         <input value="${(g.url || '').replace(/"/g, '"')}" placeholder="URL photo..." style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--font-body);margin-top:4px" onchange="D.sliderImages[${i}].url=this.value;saveData()">
-        ${g.url ? `<select style="width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:var(--font-body);margin-top:4px" onchange="D.sliderImages[${i}].imagePos=this.value;saveData();buildSlider();aTab(2)">${posOptions(g.imagePos)}</select>` : ''}
+        ${g.url ? posPickerHTML(g.url, g.imagePos, `D.sliderImages[${i}].imagePos=x+'% '+y+'%';saveData();buildSlider();aTab(2);`) : ''}
         ${photoUploadBlock('sld-'+i, `D.sliderImages[${i}].url=url;saveData();aTab(2);`)}
       </div>
       <div class="order-btns">
@@ -2430,9 +2490,7 @@ function catItem(item, i, ci) {
       <div class="a-field"><label>URL Photo</label><input value="${item.image||''}" onchange="D.categories[${ci}].items[${i}].image=this.value;saveData()">
         ${item.image ? `<img src="${item.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-top:6px;object-position:${item.imagePos || 'center'}">` : ''}
         ${photoUploadBlock('cat-'+ci+'-'+i, `D.categories[${ci}].items[${i}].image=url;saveData();aTab(curTab);`)}</div>
-      ${item.image ? `<div class="a-field"><label>Cadrage de la photo</label><select onchange="D.categories[${ci}].items[${i}].imagePos=this.value;saveData();aTab(curTab)">
-        ${posOptions(item.imagePos)}
-      </select></div>` : ''}
+      ${item.image ? `<div class="a-field"><label>Cadrage de la photo</label>${posPickerHTML(item.image, item.imagePos, `D.categories[${ci}].items[${i}].imagePos=x+'% '+y+'%';saveData();aTab(curTab);`)}</div>` : ''}
       <button class="btn-del" onclick="D.categories[${ci}].items.splice(${i},1);saveData();aTab(curTab)">🗑️ Supprimer ce lieu</button>
     </div></div>`;
 }
