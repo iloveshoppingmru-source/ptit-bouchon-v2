@@ -524,6 +524,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       b.style.display = 'none';
       void b.offsetHeight;
       b.style.display = '';
+      var shell = document.getElementById('app-shell');
+      if (shell) { shell.style.position = 'static'; void shell.offsetHeight; shell.style.position = 'fixed'; }
     });
   }
 window.nudgeReflow = nudgeReflow;
@@ -769,14 +771,14 @@ window.nudgeReflow = nudgeReflow;
 </div>
 
 <div class="screen" id="s-urgences">
-  <div class="ph"><img src="https://lmwebstatic.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2022/10/C-Care-Darne%CC%81-Fac%CC%A7ade_001.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🏥 Urgences & Santé" data-en="🏥 Emergency">🏥 Urgences & Santé</div></div>
+  <div class="ph ph2"><img src="https://lmwebstatic.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2022/10/C-Care-Darne%CC%81-Fac%CC%A7ade_001.jpg" alt=""><div class="ph-grad"></div><div class="ph-title t" data-fr="🏥 Urgences & Santé" data-en="🏥 Emergency">🏥 Urgences & Santé</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb"><div class="alert-box">⚠️ <strong>Urgences :</strong> SAMU 114 · Pompiers 115 · Police 999</div><div class="place-list" style="margin-top:14px" id="list-urgences"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div></div>
 </div>
 
 <div class="screen" id="s-checkin">
-  <div class="ph"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976359866_920eacc3_hardcoded-B-qvz8on.webp&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title t" data-fr="🔑 Check-in" data-en="🔑 Check-in">🔑 Check-in</div></div>
+  <div class="ph ph2"><img src="https://wsrv.nl/?url=https%3A%2F%2Futhnrcdulkmjlywwtkot.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fphotos%2F1788976359866_920eacc3_hardcoded-B-qvz8on.webp&w=1000&q=72&output=webp&we=1" alt="" loading="lazy" decoding="async"><div class="ph-grad"></div><div class="ph-title t" data-fr="🔑 Check-in" data-en="🔑 Check-in">🔑 Check-in</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb">
     <div class="wifi-box">
