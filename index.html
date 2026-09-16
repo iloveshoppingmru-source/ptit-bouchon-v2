@@ -878,7 +878,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
         <div class="admin-tab" onclick="aTab(20)">📸 Galerie</div>
         <div class="admin-tab" onclick="aTab(21)">📊 Stats</div>
         <div class="admin-tab" onclick="aTab(22)">💾 Sauvegarde</div>
-        <div class="admin-tab" onclick="aTab(23)">📝 Textes</div>
       </div>
       <button type="button" class="tabs-arrow right" id="tabs-arrow-right" onclick="scrollAdminTabs(1)" aria-label="Suivant"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
@@ -1907,7 +1906,6 @@ function aTab(i) {
   else if (i === 20) aGallery(el);
   else if (i === 21) aStats(el);
   else if (i === 22) aBackup(el);
-  else if (i === 23) aTexts(el);
 }
 
 function showSaved(btn) {
@@ -2098,7 +2096,8 @@ function aVisual(el) {
       <div class="a-field"><label>Taille texte page Check-in (px)</label><input type="number" value="${s.checkinFontSize || 14}" min="8" max="24" onchange="D.settings.checkinFontSize=+this.value;saveData();applyTheme()"></div>
     </div>
   </div>
-  <button class="btn-save" onclick="saveData();renderAll();showSaved(this)">💾 Appliquer le thème</button>`;
+  <button class="btn-save" onclick="saveData();renderAll();showSaved(this)">💾 Appliquer le thème</button>
+  ` + textsSectionHtml();
 }
 
 function aSlider(el) {
@@ -2253,7 +2252,7 @@ function collectTextItems() {
   });
   return groups;
 }
-function aTexts(el) {
+function textsSectionHtml() {
   const groups = collectTextItems();
   let html = `<div class="a-sec" style="position:sticky;top:0;z-index:5"><h3>📝 Textes de l'interface</h3>
     <p style="font-size:12px;color:var(--muted);margin:0 0 10px">Change le texte, la taille ou la police de n'importe quel texte de l'app, écran par écran. Laisse un champ vide pour garder le réglage par défaut.</p>
@@ -2262,7 +2261,15 @@ function aTexts(el) {
   TEXT_SCREEN_ORDER.forEach(scope => {
     const items = groups[scope];
     if (!items || !items.length) return;
-    html += `<div class="a-sec" data-scope="${scope}"><h3>${TEXT_SCREEN_LABELS[scope] || scope}</h3>`;
+    html += `<div class="a-sec" data-scope="${scope}"><h3>${TEXT_SCREEN_LABELS[scope] || scope}</h3>
+      <div class="a-row2" style="margin-bottom:8px">
+        <input type="number" min="8" max="48" id="bulk-size-${scope}" placeholder="Taille (px)">
+        <select id="bulk-font-${scope}">
+          <option value="">Police...</option>
+          ${FONT_OPTIONS.map(f => `<option value="${escAttr(f.value)}">${escHtml(f.label)}</option>`).join('')}
+        </select>
+      </div>
+      <button type="button" class="btn-add" onclick="applyStyleToScope('${scope}')">Appliquer cette taille/police à tous les textes de cette page</button>`;
     items.forEach(it => {
       const fontVal = it.font || it.curFontFamily;
       html += `<div class="a-field" data-label="${escAttr(it.defFr)}" style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px">
@@ -2284,7 +2291,25 @@ function aTexts(el) {
     });
     html += '</div>';
   });
-  el.innerHTML = html;
+  return html;
+}
+function applyStyleToScope(scope) {
+  const sizeInput = document.getElementById('bulk-size-' + scope);
+  const fontSelect = document.getElementById('bulk-font-' + scope);
+  const size = (sizeInput.value || '').toString().trim();
+  const font = fontSelect.value;
+  const groups = collectTextItems();
+  const items = groups[scope] || [];
+  if (!D.settings.customTexts) D.settings.customTexts = {};
+  items.forEach(it => {
+    const ct = D.settings.customTexts[it.key] || (D.settings.customTexts[it.key] = {});
+    if (size) ct.size = size; else delete ct.size;
+    if (font) ct.font = font; else delete ct.font;
+    if (!ct.fr && !ct.en && !ct.size && !ct.font) delete D.settings.customTexts[it.key];
+  });
+  saveData();
+  applyTranslations();
+  aTab(curTab);
 }
 function updateTextPreview(key) {
   const box = document.getElementById('tpv-' + key);
