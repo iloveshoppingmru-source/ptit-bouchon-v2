@@ -878,6 +878,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
         <div class="admin-tab" onclick="aTab(20)">📸 Galerie</div>
         <div class="admin-tab" onclick="aTab(21)">📊 Stats</div>
         <div class="admin-tab" onclick="aTab(22)">💾 Sauvegarde</div>
+        <div class="admin-tab" onclick="aTab(23)">📝 Textes</div>
       </div>
       <button type="button" class="tabs-arrow right" id="tabs-arrow-right" onclick="scrollAdminTabs(1)" aria-label="Suivant"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
@@ -999,6 +1000,7 @@ async function loadContent() {
     D = JSON.parse(JSON.stringify(FALLBACK_CONTENT));
   }
   if (!D.settings) D.settings = {};
+  if (!D.settings.customTexts) D.settings.customTexts = {};
   if (!D.checkin) D.checkin = { instructions: [] };
   if (!D.houseRules) D.houseRules = [];
   if (!D.amenities) D.amenities = [];
@@ -1170,10 +1172,28 @@ function setLang(l) {
   renderAll();
 }
 function T(fr, en) { return LANG === 'en' ? (en || fr) : fr; }
+// ── CUSTOM TEXT OVERRIDES (admin "Textes" tab) ──
+// Every .t[data-fr] element can have its content, size (px) and font swapped per-screen
+// via D.settings.customTexts[key] = {fr,en,size,font}. The key is derived from the
+// element's screen id + a slug of its default French text (not DOM position), so it
+// stays stable across unrelated edits elsewhere in the page and duplicate labels within
+// the same screen (e.g. two "Retour" buttons) automatically share one override.
+function slugText(s) {
+  return (s || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+}
+function textKeyFor(el) {
+  const screenEl = el.closest('.screen');
+  const scope = screenEl ? screenEl.id : 'global';
+  return scope + '::' + slugText(el.getAttribute('data-fr'));
+}
 function applyTranslations() {
-  document.querySelectorAll('.t[data-fr]').forEach(el => {
-    const v = el.getAttribute('data-' + LANG);
-    if (v !== null) el.innerHTML = v;
+  const overrides = (D.settings && D.settings.customTexts) || {};
+  document.querySelectorAll('#app .t[data-fr]').forEach(el => {
+    const ov = overrides[textKeyFor(el)];
+    const v = (ov && ov[LANG]) || el.getAttribute('data-' + LANG);
+    if (v !== null && v !== undefined) el.innerHTML = v;
+    el.style.fontSize = (ov && ov.size) ? ov.size + 'px' : '';
+    el.style.fontFamily = (ov && ov.font) ? ov.font : '';
   });
 }
 
@@ -1887,6 +1907,7 @@ function aTab(i) {
   else if (i === 20) aGallery(el);
   else if (i === 21) aStats(el);
   else if (i === 22) aBackup(el);
+  else if (i === 23) aTexts(el);
 }
 
 function showSaved(btn) {
@@ -2179,6 +2200,76 @@ function aAmenities(el) {
   <button class="btn-save" onclick="saveData();renderAll();showSaved(this)">💾 Enregistrer & Appliquer</button>`;
 }
 
+function escHtml(s) { return (s || '').toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function escAttr(s) { return escHtml(s).replace(/"/g, '&quot;'); }
+const TEXT_SCREEN_LABELS = {
+  's-home': '🏠 Accueil', 's-restaurants': '🍽️ Restaurants', 's-plages': '🏖️ Plages',
+  's-supermarches': '🛒 Supermarchés', 's-boulangeries': '🥐 Boulangeries', 's-activites': '🤿 Activités',
+  's-voir': '👁️ Endroits à Voir', 's-atm': '🏧 ATM', 's-essence': '⛽ Stations Essence',
+  's-urgences': '🏥 Urgences & Santé', 's-checkin': '🔑 Check-in', 's-taxe': '🏨 Taxe de Séjour',
+  's-taxi': '🚗 Taxi & Location', 's-regles': '📋 Règles de la Maison', 's-faq': '❓ FAQ',
+  's-favs': '❤️ Favoris', 'global': '📱 Menu du bas & général'
+};
+const TEXT_SCREEN_ORDER = ['s-home','s-restaurants','s-plages','s-supermarches','s-boulangeries','s-activites','s-voir','s-atm','s-essence','s-urgences','s-checkin','s-taxe','s-taxi','s-regles','s-faq','s-favs','global'];
+function collectTextItems() {
+  const overrides = (D.settings && D.settings.customTexts) || {};
+  const seen = {};
+  const groups = {};
+  document.querySelectorAll('#app .t[data-fr]').forEach(el => {
+    const scope = (el.closest('.screen') || {}).id || 'global';
+    const key = textKeyFor(el);
+    if (seen[key]) return;
+    seen[key] = true;
+    const defFr = el.getAttribute('data-fr') || '';
+    const defEn = el.getAttribute('data-en') || '';
+    const ov = overrides[key] || {};
+    (groups[scope] = groups[scope] || []).push({
+      key, defFr,
+      curFr: ov.fr || '', curEn: ov.en || '',
+      size: ov.size || '', font: ov.font || ''
+    });
+  });
+  return groups;
+}
+function aTexts(el) {
+  const groups = collectTextItems();
+  let html = `<div class="a-sec"><h3>📝 Textes de l'interface</h3>
+    <p style="font-size:12px;color:var(--muted);margin:0">Change le texte, la taille ou la police de n'importe quel texte de l'app, écran par écran. Laisse un champ vide pour garder le réglage par défaut.</p>
+  </div>`;
+  TEXT_SCREEN_ORDER.forEach(scope => {
+    const items = groups[scope];
+    if (!items || !items.length) return;
+    html += `<div class="a-sec"><h3>${TEXT_SCREEN_LABELS[scope] || scope}</h3>`;
+    items.forEach(it => {
+      html += `<div class="a-field" style="border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:12px">
+        <label>${escHtml(it.defFr)}</label>
+        <div class="a-row2">
+          <input value="${escAttr(it.curFr)}" placeholder="${escAttr(it.defFr)}" onchange="setCustomText('${it.key}','fr',this.value)">
+          <input value="${escAttr(it.curEn)}" placeholder="English" onchange="setCustomText('${it.key}','en',this.value)">
+        </div>
+        <div class="a-row2" style="margin-top:6px">
+          <input type="number" min="8" max="48" value="${it.size}" placeholder="Taille (px)" onchange="setCustomText('${it.key}','size',this.value)">
+          <select onchange="setCustomText('${it.key}','font',this.value)">
+            <option value="" ${!it.font?'selected':''}>Police par défaut</option>
+            <option value="var(--font-body)" ${it.font==='var(--font-body)'?'selected':''}>Simple</option>
+            <option value="var(--font-head)" ${it.font==='var(--font-head)'?'selected':''}>Élégante</option>
+          </select>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+function setCustomText(key, field, value) {
+  if (!D.settings.customTexts) D.settings.customTexts = {};
+  const ct = D.settings.customTexts[key] || (D.settings.customTexts[key] = {});
+  const v = (value || '').toString().trim();
+  if (v) ct[field] = field === 'size' ? v : value; else delete ct[field];
+  if (!ct.fr && !ct.en && !ct.size && !ct.font) delete D.settings.customTexts[key];
+  saveData();
+  applyTranslations();
+}
 function aTaxe(el) {
   const ti = D.taxeInfo || {};
   el.innerHTML = `<div class="a-sec"><h3>🏨 Taxe de Séjour</h3>
