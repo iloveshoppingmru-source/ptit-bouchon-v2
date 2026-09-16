@@ -519,12 +519,22 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   }
   document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
-  // Also nudge shortly after a fresh cold launch from the home-screen icon: iOS can
-  // report an incomplete safe-area-inset-bottom on the very first paint of a
-  // standalone launch, before the system finishes establishing it, leaving the
-  // bottom nav's padding calculated against a stale/zero value with nothing to
-  // trigger a recompute afterwards.
-  window.addEventListener('load', function () { setTimeout(nudgeReflow, 350); });
+  // Cold launch from the home-screen icon: iOS can take a variable amount of time
+  // to settle the real safe-area-inset-bottom (status bar / home indicator /
+  // splash transition), so a single fixed-delay nudge isn't always enough — nudge
+  // repeatedly across the settling window instead of guessing one delay.
+  window.addEventListener('load', function () {
+    [50, 200, 500, 900, 1500, 2500].forEach(function (ms) { setTimeout(nudgeReflow, ms); });
+  });
+  // Most direct signal iOS gives that its chrome/geometry actually changed —
+  // react to it whenever it fires, on top of the timed guesses above.
+  if (window.visualViewport) {
+    var vvTimer = null;
+    window.visualViewport.addEventListener('resize', function () {
+      clearTimeout(vvTimer);
+      vvTimer = setTimeout(nudgeReflow, 60);
+    });
+  }
 })();
 </script>
 <div id="app-shell"><div id="app">
