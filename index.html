@@ -517,6 +517,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       b.style.display = '';
     });
   }
+window.nudgeReflow = nudgeReflow;
   document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
   // Cold launch from the home-screen icon: iOS can take a variable amount of time
