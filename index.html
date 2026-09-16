@@ -510,6 +510,12 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   }
   document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
+  // Also nudge shortly after a fresh cold launch from the home-screen icon: iOS can
+  // report an incomplete safe-area-inset-bottom on the very first paint of a
+  // standalone launch, before the system finishes establishing it, leaving the
+  // bottom nav's padding calculated against a stale/zero value with nothing to
+  // trigger a recompute afterwards.
+  window.addEventListener('load', function () { setTimeout(nudgeReflow, 350); });
 })();
 </script>
 <div id="app-shell"><div id="app">
