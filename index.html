@@ -1325,9 +1325,9 @@ function openLb(src) { document.getElementById('lb-img').src = src; document.get
 function closeLb() { document.getElementById('lb').classList.remove('open'); }
 
 // ── FAVOURITES ──
-function toggleFav(id, name, img) {
+function toggleFav(id, name, img, cat) {
   if (D.favs[id]) delete D.favs[id];
-  else D.favs[id] = { id, name, img, ts: Date.now() };
+  else D.favs[id] = { id, name, img, cat, ts: Date.now() };
   syncGuestData();
   document.querySelectorAll(`.pcard-fav[data-id="${id}"], .fav-btn[data-id="${id}"]`).forEach(btn => { btn.textContent = D.favs[id] ? '❤️' : '🤍'; });
   if (document.getElementById('s-favs').classList.contains('active')) renderFavs();
@@ -1340,7 +1340,15 @@ function renderFavs() {
     el.innerHTML = `<div class="favs-empty"><div>🤍</div><p>${T('Aucun favori pour l\'instant.<br>Appuyez sur 🤍 sur une fiche pour l\'ajouter.', 'No favourites yet.<br>Tap 🤍 on any card to add it.')}</p></div>`;
     return;
   }
-  el.innerHTML = '<div class="place-list" style="margin-top:12px">' + favList.map(f => `
+  const catOrder = ['restaurants','plages','supermarches','boulangeries','activites','voir','atm','essence','hopitaux'];
+  const catLabel = {restaurants:'🍽️ Restaurants',plages:'🏖️ Plages',supermarches:'🛒 Supermarchés',boulangeries:'🥐 Boulangeries',activites:'🤿 Activités',voir:'👁️ Endroits à Voir',atm:'🏧 ATM',essence:'⛽ Stations Essence',hopitaux:'🏥 Urgences & Santé'};
+  favList.sort((a, b) => (catOrder.indexOf(a.cat) + 1 || 99) - (catOrder.indexOf(b.cat) + 1 || 99));
+  function favGroupHeader(f, idx) {
+    if (idx > 0 && favList[idx - 1].cat === f.cat) return '';
+    const label = catLabel[f.cat] || '📌 Autres';
+    return '<div style="margin:' + (idx === 0 ? '0' : '18px') + ' 0 8px;font-family:var(--font-head);font-size:15px;color:var(--muted);padding:0 4px">' + label + '</div>';
+  }
+  el.innerHTML = '<div class="place-list" style="margin-top:12px">' + favList.map((f, idx) => `${favGroupHeader(f, idx)}
     <div class="pcard" style="display:flex;align-items:center;gap:12px;padding:12px 14px">
       ${f.img ? `<img src="${imgW(f.img,160,60)}" loading="lazy" decoding="async" style="width:60px;height:50px;border-radius:9px;object-fit:cover;flex-shrink:0">` : '<div style="width:60px;height:50px;border-radius:9px;background:#eef5ff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">❤️</div>'}
       <div style="flex:1"><div style="font-size:14px;font-weight:700">${f.name || ''}</div></div>
@@ -1379,7 +1387,7 @@ function pcard(item, icon, categoryId, big) {
   return `<div class="pcard${big ? ' pcard-big' : ''}">
     <div class="pcard-img-wrap">
       ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" style="object-position:${item.imagePos || 'center'}" onerror="this.style.display='none'" onclick="openLb(this.src)">` : `<div class="pcard-nophoto">${icon}</div>`}
-      <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
+      <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}','${categoryId}')">${isFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="pcard-body">
       <div class="pcard-head">
