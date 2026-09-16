@@ -160,7 +160,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .lang-opt{padding:5px 10px;font-size:11px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s}
 .lang-opt.active{background:rgba(255,255,255,.25);color:#fff}
 .pill-nav{background:var(--nav-bg,var(--card));border-radius:999px;margin:-34px 16px 0;padding:8px 6px;display:flex;position:relative;z-index:10;box-shadow:0 10px 30px rgba(10,22,40,.18);flex-shrink:0}
-.pill-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
+.pill-item{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:4px 3px;border-radius:16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;transition:all .2s;text-align:center;line-height:1.15}
+.pill-item span{min-height:2.3em;display:flex;align-items:flex-start;justify-content:center}
 .pill-item:not(:last-child)::after{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:26px;background:var(--border)}
 .pill-item.active{color:var(--text)}
 .pill-ico{width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:background .2s}
@@ -244,7 +245,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .place-list{padding:0 18px;display:flex;flex-direction:column;gap:11px;margin-top:22px}
 .pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:0 2px 10px rgba(10,22,40,.06)}
 .pcard-img-wrap{position:relative}
-.pcard-img{width:100%;height:148px;object-fit:cover;background:var(--border);display:block}
+.pcard-img{width:100%;height:148px;object-fit:cover;background:var(--border);display:block;cursor:pointer}
 .pcard-nophoto{width:100%;height:148px;background:linear-gradient(135deg,#f0e8d8,#e2d3b6);display:flex;align-items:center;justify-content:center;font-size:40px}
 .pcard-fav{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);border:none;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(10,22,40,.18);transition:transform .2s}
 .pcard-fav:active{transform:scale(1.2)}
@@ -1258,7 +1259,7 @@ function toggleFav(id, name, img) {
   if (D.favs[id]) delete D.favs[id];
   else D.favs[id] = { id, name, img, ts: Date.now() };
   syncGuestData();
-  document.querySelectorAll(`.fav-btn[data-id="${id}"]`).forEach(btn => { btn.textContent = D.favs[id] ? '❤️' : '🤍'; });
+  document.querySelectorAll(`.pcard-fav[data-id="${id}"], .fav-btn[data-id="${id}"]`).forEach(btn => { btn.textContent = D.favs[id] ? '❤️' : '🤍'; });
   if (document.getElementById('s-favs').classList.contains('active')) renderFavs();
 }
 function renderFavs() {
@@ -1307,7 +1308,7 @@ function pcard(item, icon, categoryId, big) {
   const pid = 'pc' + uid();
   return `<div class="pcard${big ? ' pcard-big' : ''}">
     <div class="pcard-img-wrap">
-      ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" style="object-position:${item.imagePos || 'center'}" onerror="this.style.display='none'">` : `<div class="pcard-nophoto">${icon}</div>`}
+      ${item.image ? `<img class="pcard-img" src="${item.image}" alt="${name}" loading="lazy" decoding="async" style="object-position:${item.imagePos || 'center'}" onerror="this.style.display='none'" onclick="openLb(this.src)">` : `<div class="pcard-nophoto">${icon}</div>`}
       <button class="pcard-fav" data-id="${id}" onclick="toggleFav('${id}','${safeName}','${safeImg}')">${isFav ? '❤️' : '🤍'}</button>
     </div>
     <div class="pcard-body">
