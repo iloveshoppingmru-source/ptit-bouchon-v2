@@ -1364,22 +1364,28 @@ function trackVisit(id) {
   logVisitEvent(id);
 }
 // Best-effort, cached-once visitor country lookup (free, no-key, CORS-enabled geo API). Never blocks the UI.
-let VISITOR_COUNTRY_PROMISE = null;
-function getVisitorCountry() {
-  if (!VISITOR_COUNTRY_PROMISE) {
-    VISITOR_COUNTRY_PROMISE = fetch('https://ipwho.is/')
+let VISITOR_INFO_PROMISE = null;
+function getVisitorInfo() {
+  if (!VISITOR_INFO_PROMISE) {
+    VISITOR_INFO_PROMISE = fetch('https://ipwho.is/')
       .then(r => r.json())
-      .then(j => (j && j.success !== false && j.country) ? j.country : null)
-      .catch(() => null);
+      .then(j => (j && j.success !== false) ? { country: j.country || null, ip: j.ip || null } : { country: null, ip: null })
+      .catch(() => ({ country: null, ip: null }));
   }
-  return VISITOR_COUNTRY_PROMISE;
+  return VISITOR_INFO_PROMISE;
+}
+function getDeviceType() {
+  const ua = navigator.userAgent || '';
+  if (/iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) return 'Tablette';
+  if (/Mobi|Android|iPhone|iPod/i.test(ua)) return 'Téléphone';
+  return 'Ordinateur';
 }
 // Fire-and-forget insert into visit_events — never blocks navigation, never throws.
 function logVisitEvent(id) {
   (async () => {
     try {
-      const country = await getVisitorCountry();
-      await sbInsert('visit_events', { event_type: 'screen_view', target_id: id, device_id: DEVICE_ID, country });
+      const info = await getVisitorInfo();
+      await sbInsert('visit_events', { event_type: 'screen_view', target_id: id, device_id: DEVICE_ID, country: info.country, ip: info.ip, device_type: getDeviceType() });
     } catch (e) { /* best-effort analytics only */ }
   })();
 }
@@ -1387,8 +1393,8 @@ function logVisitEvent(id) {
 function logItemClick(itemId, itemLabel, categoryId) {
   (async () => {
     try {
-      const country = await getVisitorCountry();
-      await sbInsert('visit_events', { event_type: 'item_click', target_id: itemId, target_label: itemLabel || '', category_id: categoryId || '', device_id: DEVICE_ID, country });
+      const info = await getVisitorInfo();
+      await sbInsert('visit_events', { event_type: 'item_click', target_id: itemId, target_label: itemLabel || '', category_id: categoryId || '', device_id: DEVICE_ID, country: info.country, ip: info.ip, device_type: getDeviceType() });
     } catch (e) { /* best-effort analytics only */ }
   })();
 }
@@ -2049,7 +2055,7 @@ function plateCardHTML(d, big) {
   return '<div class="plat-card' + (big ? ' plat-card-big' : '') + '">' + photoHtml +
     '<div class="plat-body">' +
     '<div class="plat-name t" data-fr="' + escAttr(d.nameFr || '') + '" data-en="' + escAttr(d.nameEn || d.nameFr || '') + '">' + escHtml(d.nameFr || '') + '</div>' +
-    '<div class="plat-rating">' + staticStars(d.rating) + '</div>' +
+    '<div class="plat-rating">' + [1,2,3,4,5].map(function(n){return '<span class="rate-star' + (((D.ratings[d.id]||0)>=n)?' active':'') + '" data-id="' + d.id + '" onclick="setRating(\'' + d.id + '\',' + n + ')">★</span>';}).join('') + (RATING_SUMMARY[d.id] ? '<span class="rate-num">' + RATING_SUMMARY[d.id].avg.toFixed(1) + '</span><span class="rate-count">(' + RATING_SUMMARY[d.id].count + ')</span>' : '') + '</div>' +
     '<div class="plat-desc t" data-fr="' + escAttr(d.descFr || '') + '" data-en="' + escAttr(d.descEn || '') + '">' + escHtml(d.descFr || '') + '</div>' + contactHtml +
     '</div></div>';
 }
@@ -2085,7 +2091,6 @@ function dishAdminItem(d, i) {
   html += '<div class="a-field"><label>Nom (EN)</label><input value="' + escAttr(d.nameEn || '') + '" onchange="D.dishes[' + i + '].nameEn=this.value;saveData();aTab(23)"></div>';
   html += '<div class="a-field"><label>Description (FR)</label><textarea onchange="D.dishes[' + i + '].descFr=this.value;saveData();aTab(23)">' + escHtml(d.descFr || '') + '</textarea></div>';
   html += '<div class="a-field"><label>Description (EN)</label><textarea onchange="D.dishes[' + i + '].descEn=this.value;saveData();aTab(23)">' + escHtml(d.descEn || '') + '</textarea></div>';
-  html += '<div class="a-field"><label>Note (1-5, ex: 4.5)</label><input type="number" min="1" max="5" step="0.1" value="' + (d.rating || 5) + '" onchange="D.dishes[' + i + '].rating=+this.value;saveData()"></div>';
   html += '<div class="a-field"><label>Contact (téléphone/WhatsApp) - optionnel</label><input value="' + escAttr(d.contact || '') + '" placeholder="+230 5xxx xxxx" onchange="D.dishes[' + i + '].contact=this.value;saveData();aTab(23)"></div>';
   html += '<div class="a-field"><label>Photo 1</label>' + photoUploadBlock(uidc + '-p1', 'D.dishes[' + i + '].photo1=url;saveData();aTab(23);');
   if (d.photo1) html += posPickerHTML(d.photo1, d.photo1Pos, 'D.dishes[' + i + '].photo1Pos=x+\'% \'+y+\'%\';saveData();aTab(23);');
@@ -2846,14 +2851,16 @@ function timeAgoFr(iso) {
 }
 function renderStats(el) {
   if (!statsData) return;
-  const d = statsData[statsRange] || { topScreens: [], topItems: [], topCountries: [], total: 0 };
+  const d = statsData[statsRange] || { topScreens: [], topItems: [], topCountries: [], topDevices: [], total: 0 };
   const topScreens = d.topScreens || [];
   const topItems = d.topItems || [];
   const topCountries = d.topCountries || [];
+  const topDevices = d.topDevices || [];
   const recent = statsData.recent || [];
   const maxScreen = topScreens.length ? topScreens[0].count : 1;
   const maxItem = topItems.length ? topItems[0].count : 1;
   const maxCountry = topCountries.length ? topCountries[0].count : 1;
+  const maxDevice = topDevices.length ? topDevices[0].count : 1;
   const pill = (key, label) => `<div style="flex:1;text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;background:${statsRange===key?'var(--accent)':'transparent'};color:${statsRange===key?'#fff':'var(--muted)'}" onclick="statsRange='${key}';renderStats(document.getElementById('admin-content'))">${label}</div>`;
   el.innerHTML = `<div class="a-sec">
     <h3>📊 Statistiques de Visite</h3>
@@ -2882,13 +2889,19 @@ function renderStats(el) {
         <div class="stat-label"><span>${countryFlag(c.country && c.country.length===2 ? c.country : '')} ${c.country || 'Inconnu'}</span><span>${c.count}</span></div>
         <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(c.count / maxCountry * 100)}%"></div></div>
       </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
+    <h4 style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--muted)">VISITEURS PAR APPAREIL</h4>
+    ${topDevices.length ? topDevices.map(dv => `
+      <div class="stat-bar-wrap" style="padding:0 0 10px">
+        <div class="stat-label"><span>${dv.device === 'Téléphone' ? '📱' : dv.device === 'Tablette' ? '📟' : '💻'} ${dv.device}</span><span>${dv.count}</span></div>
+        <div class="stat-bar"><div class="stat-fill" style="width:${Math.round(dv.count / maxDevice * 100)}%"></div></div>
+      </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune donnée pour cette période.</p>`}
     <h4 style="font-size:12px;font-weight:700;margin:16px 0 10px;color:var(--muted)">ACTIVITÉ RÉCENTE</h4>
     <div style="max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:10px">
       ${recent.length ? recent.map(r => `
         <div style="display:flex;justify-content:space-between;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px">
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;color:var(--text)">${r.type === 'screen_view' ? '👁️ ' + (SCREEN_LABELS[r.id] || r.id) : '📍 ' + (r.label || r.id) + (r.category ? ` <span style="color:var(--muted);font-weight:400">(${r.category})</span>` : '')}</div>
-            <div style="color:var(--muted)">${timeAgoFr(r.at)}</div>
+            <div style="color:var(--muted)">${timeAgoFr(r.at)}${r.device ? ' · ' + (r.device==='Téléphone'?'📱':r.device==='Tablette'?'📟':'💻') + ' ' + r.device : ''}${r.ip ? ' · ' + r.ip : ''}</div>
           </div>
           <div style="white-space:nowrap;font-weight:600">${countryFlag(r.country && r.country.length===2 ? r.country : '')} ${r.country || ''}</div>
         </div>`).join('') : `<p style="font-size:13px;color:var(--muted);text-align:center;padding:14px">Aucune activité récente.</p>`}
