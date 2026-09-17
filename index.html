@@ -492,14 +492,20 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .sec-title{font-size:26px !important}
 }
 
-.plat-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:12px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.plat-photos{display:flex;gap:8px;margin-bottom:10px}
-.plat-photo{flex:1;height:148px;border-radius:10px;overflow:hidden;background:#e6eef5}
+.plat-card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;flex-direction:column}
+.plat-photos{display:flex;gap:2px}
+.plat-photo{flex:1;height:148px;background:#e6eef5}
 .plat-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .plat-name{font-family:var(--font-head);font-size:var(--plats-name-size,17px);font-weight:700;color:var(--text);margin-bottom:4px}
 .plat-desc{font-family:var(--font-body);font-size:var(--plats-desc-size,13px);color:var(--muted);line-height:1.5;margin-bottom:6px}
 .plat-contact{display:inline-flex;align-items:center;gap:4px;margin-top:2px;font-size:13px;color:var(--blue);font-weight:600;text-decoration:none}
 .plat-rating{display:flex;gap:2px;margin-bottom:6px}
+.plat-body{padding:12px}
+.plat-card-big{grid-row:span 2}
+.trio-grid>.plat-card-big .plat-photos{flex:1;min-height:0}
+.trio-grid>.plat-card-big .plat-photo{height:100%}
+.trio-grid .plat-photo{height:110px}
+.trio-grid .plat-desc{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head>
 <body>
@@ -1982,33 +1988,45 @@ function staticStars(rating) {
   }
   return out;
 }
-function plateCardHTML(d) {
-  var photos = [];
-  if (d.photo1) photos.push({url: d.photo1, pos: d.photo1Pos});
-  if (d.photo2) photos.push({url: d.photo2, pos: d.photo2Pos});
-  var photosHtml = '';
-  if (photos.length) {
-    photosHtml = '<div class="plat-photos">' + photos.map(function(p){
-      return '<div class="plat-photo"><img src="' + p.url + '" style="object-position:' + (p.pos || 'center') + '"></div>';
-    }).join('') + '</div>';
+function plateCardHTML(d, big) {
+  var photoHtml = '';
+  if (d.photo1) {
+    photoHtml = '<div class="plat-photos"><div class="plat-photo"><img src="' + d.photo1 + '" style="object-position:' + (d.photo1Pos || 'center') + ';cursor:pointer" onclick="openLb(this.src)"></div></div>';
   }
   var contactHtml = '';
   if (d.contact) {
     var telHref = 'tel:' + d.contact.replace(/[^0-9+]/g, '');
     contactHtml = '<a class="plat-contact" href="' + telHref + '">📞 ' + escHtml(d.contact) + '</a>';
   }
-  return '<div class="plat-card">' + photosHtml +
+  return '<div class="plat-card' + (big ? ' plat-card-big' : '') + '">' + photoHtml +
+    '<div class="plat-body">' +
     '<div class="plat-name t" data-fr="' + escAttr(d.nameFr || '') + '" data-en="' + escAttr(d.nameEn || d.nameFr || '') + '">' + escHtml(d.nameFr || '') + '</div>' +
     '<div class="plat-rating">' + staticStars(d.rating) + '</div>' +
     '<div class="plat-desc t" data-fr="' + escAttr(d.descFr || '') + '" data-en="' + escAttr(d.descEn || '') + '">' + escHtml(d.descFr || '') + '</div>' + contactHtml +
-    '</div>';
+    '</div></div>';
 }
 function renderPlats() {
   var el = document.getElementById('plats-container');
   if (!el) return;
   var list = D.dishes || [];
   if (!list.length) { el.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 20px">Aucune spécialité pour le moment.</p>'; return; }
-  el.innerHTML = list.map(plateCardHTML).join('');
+  var html = '';
+  var i = 0;
+  var groupIdx = 0;
+  while (i + 3 <= list.length) {
+    var bigLeft = groupIdx % 2 === 0;
+    var bigHtml = plateCardHTML(list[i], true);
+    var s1 = plateCardHTML(list[i + 1], false);
+    var s2 = plateCardHTML(list[i + 2], false);
+    html += '<div class="trio-grid">' + (bigLeft ? bigHtml + s1 + s2 : s1 + bigHtml + s2) + '</div>';
+    i += 3;
+    groupIdx++;
+  }
+  while (i < list.length) {
+    html += plateCardHTML(list[i], false);
+    i++;
+  }
+  el.innerHTML = html;
 }
 function dishAdminItem(d, i) {
   var uidc = 'plat' + i;
@@ -2024,10 +2042,7 @@ function dishAdminItem(d, i) {
   html += '<div class="a-field"><label>Photo 1</label>' + photoUploadBlock(uidc + '-p1', 'D.dishes[' + i + '].photo1=url;saveData();aTab(23);');
   if (d.photo1) html += posPickerHTML(d.photo1, d.photo1Pos, 'D.dishes[' + i + '].photo1Pos=x+\'% \'+y+\'%\';saveData();aTab(23);');
   html += '</div>';
-  html += '<div class="a-field"><label>Photo 2</label>' + photoUploadBlock(uidc + '-p2', 'D.dishes[' + i + '].photo2=url;saveData();aTab(23);');
-  if (d.photo2) html += posPickerHTML(d.photo2, d.photo2Pos, 'D.dishes[' + i + '].photo2Pos=x+\'% \'+y+\'%\';saveData();aTab(23);');
-  html += '</div>';
-  html += '<button class="btn-del" onclick="if(confirm(\'Supprimer cette spécialité ?\')){D.dishes.splice(' + i + ',1);saveData();aTab(23);}">🗑️ Supprimer</button>';
+html += '<button class="btn-del" onclick="if(confirm(\'Supprimer cette spécialité ?\')){D.dishes.splice(' + i + ',1);saveData();aTab(23);}">🗑️ Supprimer</button>';
   html += '</div></div>';
   return html;
 }
