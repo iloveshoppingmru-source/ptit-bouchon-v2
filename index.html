@@ -203,17 +203,8 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .back-bottom{padding:16px 16px calc(16px + var(--safe));display:flex;justify-content:center}
 .sec-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 10px}
 .sec-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--dark)}
-.weather-card{margin:14px 18px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:0 2px 12px rgba(27,108,168,.06)}
-.weather-today{display:flex;align-items:center;gap:12px}
-.weather-today-ico{font-size:36px;line-height:1}
-.weather-today-temp{font-size:26px;font-weight:700;color:var(--dark);line-height:1.2}
-.weather-today-label{font-size:13px;color:var(--muted);font-weight:500}
-.weather-days{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-.weather-day{flex:1;min-width:0;text-align:center}
-.weather-day-name{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px}
-.weather-day-ico{font-size:19px;margin-bottom:2px}
-.weather-day-temp{font-size:12px;color:var(--text);font-weight:600;white-space:nowrap}
-.weather-day-temp small{color:var(--muted);font-weight:400}
+.hero-weather-mini{display:block;font-family:'Montserrat',var(--font-body);font-size:12px;font-weight:400;letter-spacing:.3px;opacity:.9;margin-top:4px;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+.hero-weather-mini .hw-ico{margin-right:3px}
 .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:16px 18px 0}
 .q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 8px;text-align:center}
 .q-ico{font-size:24px;margin-bottom:5px}
@@ -603,7 +594,7 @@ window.nudgeReflow = nudgeReflow;
     <div class="hero-slides" id="hero-slides"></div>
     <div class="hero-dots" id="hero-dots"></div>
     <div class="hero-top">
-      <div class="hero-logo"><span id="h-name">P'tit Bouchon</span><small id="h-tagline">Villa face à la mer · Île Maurice</small></div>
+      <div class="hero-logo"><span id="h-name">P'tit Bouchon</span><small id="h-tagline">Villa face à la mer · Île Maurice</small><div id="hero-weather" class="hero-weather-mini"></div></div>
       <div class="lang-toggle"><div class="lang-opt active" onclick="setLang('fr')">FR</div><div class="lang-opt" onclick="setLang('en')">EN</div></div>
     </div>
     <div class="hero-quote t" data-fr="Ici, le temps prend une autre allure." data-en="Here, time takes on a different pace.">Ici, le temps prend une autre allure.</div>
@@ -625,7 +616,6 @@ window.nudgeReflow = nudgeReflow;
     <div class="pill-item" onclick="homeTab(4)"><div class="pill-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="t" data-fr="Notre villa" data-en="Our villa">Notre villa</span></div>
   </div>
   <div class="scroll spb" id="tab-0">
-    <div id="weather-widget"></div>
     <div id="home-cats-grid"></div>
     <a href="#" onclick="openAdmin();return false" class="admin-link">⚙ Administration</a>
     <div style="height:10px"></div>
@@ -1633,23 +1623,12 @@ function wmoInfo(code) {
   return map[code] || ['🌡️', 'Météo', 'Weather'];
 }
 function paintWeather() {
-  const el = document.getElementById('weather-widget');
+  const el = document.getElementById('hero-weather');
   if (!el) return;
   if (!WEATHER_DATA || !WEATHER_DATA.current) { el.innerHTML = ''; return; }
   const w = WEATHER_DATA;
   const info = wmoInfo(w.current.weather_code);
-  const dayNamesFr = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
-  const dayNamesEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const times = (w.daily && w.daily.time) || [];
-  const days = times.slice(0, 5).map(function (dateStr, idx) {
-    const dt = new Date(dateStr + 'T12:00:00');
-    const dn = LANG === 'en' ? dayNamesEn[dt.getDay()] : dayNamesFr[dt.getDay()];
-    const dInfo = wmoInfo(w.daily.weather_code[idx]);
-    const max = Math.round(w.daily.temperature_2m_max[idx]);
-    const min = Math.round(w.daily.temperature_2m_min[idx]);
-    return '<div class="weather-day"><div class="weather-day-name">' + (idx === 0 ? T('Auj.', 'Today') : dn) + '</div><div class="weather-day-ico">' + dInfo[0] + '</div><div class="weather-day-temp">' + max + '° <small>' + min + '°</small></div></div>';
-  }).join('');
-  el.innerHTML = '<div class="weather-card"><div class="weather-today"><div class="weather-today-ico">' + info[0] + '</div><div><div class="weather-today-temp">' + Math.round(w.current.temperature_2m) + '°C</div><div class="weather-today-label">' + T(info[1], info[2]) + '</div></div></div><div class="weather-days">' + days + '</div></div>';
+  el.innerHTML = '<span class="hw-ico">' + info[0] + '</span>' + Math.round(w.current.temperature_2m) + '°C · ' + T(info[1], info[2]);
 }
 async function loadWeather() {
   let cached = null;
