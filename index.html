@@ -280,6 +280,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .rate-star-half{position:relative;display:inline-block}
 .rate-star-half>.rate-star-fill{position:absolute;top:0;left:0;overflow:hidden;white-space:nowrap;color:#ffc107}
 .rate-num{margin-left:4px;font-size:12px;color:var(--muted);font-weight:700;vertical-align:middle}
+.rate-count{margin-left:2px;font-size:11px;color:var(--muted)}
 .trio-grid>.pcard{margin:0;display:flex;flex-direction:column}
 .trio-grid>.pcard-big{grid-row:span 2}
 .trio-grid>.pcard-big .pcard-img-wrap{flex:1;min-height:0}
@@ -1459,6 +1460,29 @@ function renderFavs() {
 }
 
 // ── RATINGS ──
+let RATING_SUMMARY = {};
+async function loadRatingSummary() {
+  try {
+    const rows = await sbSelect('guest_data', 'select=ratings');
+    const sums = {};
+    (rows || []).forEach(function (row) {
+      const r = row.ratings || {};
+      Object.keys(r).forEach(function (id) {
+        const v = +r[id];
+        if (!v) return;
+        if (!sums[id]) sums[id] = { total: 0, count: 0 };
+        sums[id].total += v;
+        sums[id].count += 1;
+      });
+    });
+    const out = {};
+    Object.keys(sums).forEach(function (id) {
+      out[id] = { avg: sums[id].total / sums[id].count, count: sums[id].count };
+    });
+    RATING_SUMMARY = out;
+  } catch (e) { /* leave RATING_SUMMARY empty, cards just show the per-visitor widget */ }
+}
+
 function setRating(id, stars) {
   D.ratings[id] = stars; syncGuestData();
   document.querySelectorAll(`.rate-star[data-id="${id}"]`).forEach((s, i) => s.classList.toggle('active', i < stars));
@@ -1476,6 +1500,7 @@ function pcard(item, icon, categoryId, big) {
   const desc = T(item.descFr, item.descEn) || '';
   const isFav = !!D.favs[id];
   const rating = D.ratings[id] || 0;
+  const sum = RATING_SUMMARY[id];
   const safeName = name.replace(/'/g, "\\'").replace(/"/g, '');
   const safeImg = (item.image || '').replace(/'/g, "\\'");
   const safeCat = (categoryId || '').replace(/'/g, "\\'");
@@ -1506,6 +1531,7 @@ function pcard(item, icon, categoryId, big) {
     </div>
     <div class="pcard-rating">
       ${[1,2,3,4,5].map(n => `<span class="rate-star${rating >= n ? ' active' : ''}" data-id="${id}" onclick="setRating('${id}',${n})">★</span>`).join('')}
+      ${sum ? `<span class="rate-num">${sum.avg.toFixed(1)}</span><span class="rate-count">(${sum.count})</span>` : ''}
     </div>
   </div>`;
 }
@@ -2059,7 +2085,7 @@ function dishAdminItem(d, i) {
   html += '<div class="a-field"><label>Nom (EN)</label><input value="' + escAttr(d.nameEn || '') + '" onchange="D.dishes[' + i + '].nameEn=this.value;saveData();aTab(23)"></div>';
   html += '<div class="a-field"><label>Description (FR)</label><textarea onchange="D.dishes[' + i + '].descFr=this.value;saveData();aTab(23)">' + escHtml(d.descFr || '') + '</textarea></div>';
   html += '<div class="a-field"><label>Description (EN)</label><textarea onchange="D.dishes[' + i + '].descEn=this.value;saveData();aTab(23)">' + escHtml(d.descEn || '') + '</textarea></div>';
-  html += '<div class="a-field"><label>Note (1-5, ex: 4.5)</label><input type="number" min="1" max="5" step="0.1" value="' + (d.rating || 5) + '" onchange="D.dishes[' + i + '].rating=+this.value;saveData();aTab(23)"></div>';
+  html += '<div class="a-field"><label>Note (1-5, ex: 4.5)</label><input type="number" min="1" max="5" step="0.1" value="' + (d.rating || 5) + '" onchange="D.dishes[' + i + '].rating=+this.value;saveData()"></div>';
   html += '<div class="a-field"><label>Contact (téléphone/WhatsApp) - optionnel</label><input value="' + escAttr(d.contact || '') + '" placeholder="+230 5xxx xxxx" onchange="D.dishes[' + i + '].contact=this.value;saveData();aTab(23)"></div>';
   html += '<div class="a-field"><label>Photo 1</label>' + photoUploadBlock(uidc + '-p1', 'D.dishes[' + i + '].photo1=url;saveData();aTab(23);');
   if (d.photo1) html += posPickerHTML(d.photo1, d.photo1Pos, 'D.dishes[' + i + '].photo1Pos=x+\'% \'+y+\'%\';saveData();aTab(23);');
@@ -3011,6 +3037,7 @@ setTimeout(hideBootScreen, 8000);
   if (!D.catOrder || D.catOrder.length === 0) D.catOrder = BACKUP_DEFAULTS.catOrder || [];
   if (!D.sliderImages || D.sliderImages.length === 0) D.sliderImages = BACKUP_DEFAULTS.sliderImages || [];
   await loadGuestData();
+  await loadRatingSummary();
   if (!LANG) {
     document.getElementById('lang-screen').style.display = 'flex';
   } else {
