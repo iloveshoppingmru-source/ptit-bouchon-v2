@@ -30,6 +30,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .sec-title{font-size:30px !important}
   .pcard-name{font-size:16px}
   .pcard-img{height:170px}
+  .plat-photo{height:170px}
   .feat-card{height:520px;margin:0 22px 12px}
   .grid2{padding:0 22px}
   .grid-card{height:150px}
@@ -66,6 +67,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .hero-logo{font-size:46px}
   .ph{height:220px}
   .pcard-img{height:210px}
+  .plat-photo{height:210px}
   .feat-card{height:600px;margin:0 30px 14px}
   .grid2{padding:0 30px}
   .grid-card{height:190px}
@@ -85,6 +87,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   .hero{height:600px}
   .hero-logo{font-size:46px}
   .pcard-img{height:190px}
+  .plat-photo{height:190px}
   .feat-card{height:560px;margin:0 26px 14px}
   .grid2{padding:0 26px}
   .grid-card{height:170px}
@@ -491,7 +494,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 
 .plat-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:12px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .plat-photos{display:flex;gap:8px;margin-bottom:10px}
-.plat-photo{flex:1;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#e6eef5}
+.plat-photo{flex:1;height:148px;border-radius:10px;overflow:hidden;background:#e6eef5}
 .plat-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .plat-name{font-family:var(--font-head);font-size:var(--plats-name-size,17px);font-weight:700;color:var(--text);margin-bottom:4px}
 .plat-desc{font-family:var(--font-body);font-size:var(--plats-desc-size,13px);color:var(--muted);line-height:1.5;margin-bottom:6px}
@@ -840,7 +843,7 @@ window.nudgeReflow = nudgeReflow;
 </div>
 
 <div class="screen" id="s-favs">
-  <div class="ph ph2" data-cat="favs"><img id="ph-img-favs" src="https://mauritiusnow.com/wp-content/uploads/2023/06/Underwater-waterfall-Le-Morne-Mauritius.jpg"><div class="ph-grad" style="background:linear-gradient(to bottom,var(--dark),rgba(10,22,40,.7))"></div><div class="ph-title t" data-fr="❤️ Mes Favoris" data-en="❤️ My Favourites">❤️ Mes Favoris</div></div>
+  <div class="ph ph2" data-cat="favs"><img id="ph-img-favs" src="https://mauritiusnow.com/wp-content/uploads/2023/06/Underwater-waterfall-Le-Morne-Mauritius.jpg"><div class="ph-grad"></div><div class="ph-title t" data-fr="❤️ Mes Favoris" data-en="❤️ My Favourites">❤️ Mes Favoris</div></div>
   <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
   <div class="scroll spb"><div id="favs-container"></div>
     <div class="back-bottom"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
@@ -848,7 +851,7 @@ window.nudgeReflow = nudgeReflow;
 </div>
 
   <div class="screen" id="s-plats">
-    <div class="ph ph2" data-cat="plats"><img id="ph-img-plats" src="https://upload.wikimedia.org/wikipedia/commons/1/11/Plats-varies.jpg"><div class="ph-grad" style="background:linear-gradient(to bottom,var(--dark),rgba(10,22,40,.7))"></div><div class="ph-title t" data-fr="🍽️ Spécialités Locales" data-en="🍽️ Local Specialties">🍽️ Spécialités Locales</div></div>
+    <div class="ph ph2" data-cat="plats"><img id="ph-img-plats" src="https://upload.wikimedia.org/wikipedia/commons/1/11/Plats-varies.jpg"><div class="ph-grad"></div><div class="ph-title t" data-fr="🍽️ Spécialités Locales" data-en="🍽️ Local Specialties">🍽️ Spécialités Locales</div></div>
     <div class="back-bar"><button class="back-btn" onclick="back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg> <span class="t" data-fr="Retour" data-en="Back">Retour</span></button></div>
     <div class="scroll spb"><div id="plats-container"></div></div>
   </div>
