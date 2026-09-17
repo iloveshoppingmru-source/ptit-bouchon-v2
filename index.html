@@ -520,20 +520,29 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <script>
-// #app-shell uses position:fixed + inset:0, which always exactly matches the
-// live visible viewport on its own — no JS height sync needed (a prior version
-// set an inline pixel height from window.innerHeight/visualViewport.height,
-// which could freeze at a stale value on some devices — e.g. iPhone 16 Pro Max —
-// leaving a gap below the bottom nav once Safari's chrome settled).
-// On resume from background (app switcher, screen lock, tab switch), iOS Safari
-// sometimes keeps a stale geometry for fixed-position elements and env(safe-area-*)
-// until something forces a reflow — this can leave the bottom nav gap until the
-// user force-quits and relaunches. Nudge a reflow (no hardcoded dimension, so it
-// can never "freeze" like the reverted fix above) whenever the page becomes visible again.
+// #app-shell uses CSS `height:100dvh` (dynamic viewport height), which always
+// exactly matches the live visible viewport on its own, continuously, including
+// right after an iOS PWA resumes from background — no JS height sync needed.
+// A real bug in a prior version: setAppHeight() below also wrote an inline
+// pixel height from window.innerHeight, which overrides the CSS (inline style
+// beats a stylesheet rule) and can freeze at a stale value — window.innerHeight
+// can be momentarily wrong for a beat right after resuming from background —
+// leaving a gap below the bottom nav until force-quit and relaunch. Fixed by
+// making setAppHeight() only ever clear a stale inline height, never set one.
+// The reflow nudge below is kept as an extra nudge for other iOS repaint glitches
+// (e.g. env(safe-area-*) not immediately repainting) but no longer touches height.
 (function () {
   function setAppHeight() {
+    // Intentionally does NOT set an inline height. CSS `height:100dvh` on
+    // #app-shell already tracks the live visible viewport continuously and
+    // correctly, including right after resuming from background. Setting an
+    // inline height here from window.innerHeight was the actual cause of the
+    // recurring gap: window.innerHeight can report a stale value for a beat
+    // after an iOS PWA resumes, and once written inline it permanently wins
+    // over the CSS (which self-corrects) until the next call — clear any
+    // stale inline height instead, as a safety net against old cached JS.
     var shell = document.getElementById('app-shell');
-    if (shell) shell.style.height = window.innerHeight + 'px';
+    if (shell && shell.style.height) shell.style.height = '';
   }
   window.setAppHeight = setAppHeight;
   function nudgeReflow() {
