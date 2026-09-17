@@ -203,6 +203,17 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .back-bottom{padding:16px 16px calc(16px + var(--safe));display:flex;justify-content:center}
 .sec-head{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 10px}
 .sec-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--dark)}
+.weather-card{margin:14px 18px 0;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:0 2px 12px rgba(27,108,168,.06)}
+.weather-today{display:flex;align-items:center;gap:12px}
+.weather-today-ico{font-size:36px;line-height:1}
+.weather-today-temp{font-size:26px;font-weight:700;color:var(--dark);line-height:1.2}
+.weather-today-label{font-size:13px;color:var(--muted);font-weight:500}
+.weather-days{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.weather-day{flex:1;min-width:0;text-align:center}
+.weather-day-name{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:4px}
+.weather-day-ico{font-size:19px;margin-bottom:2px}
+.weather-day-temp{font-size:12px;color:var(--text);font-weight:600;white-space:nowrap}
+.weather-day-temp small{color:var(--muted);font-weight:400}
 .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;padding:16px 18px 0}
 .q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 8px;text-align:center}
 .q-ico{font-size:24px;margin-bottom:5px}
@@ -614,6 +625,7 @@ window.nudgeReflow = nudgeReflow;
     <div class="pill-item" onclick="homeTab(4)"><div class="pill-ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="t" data-fr="Notre villa" data-en="Our villa">Notre villa</span></div>
   </div>
   <div class="scroll spb" id="tab-0">
+    <div id="weather-widget"></div>
     <div id="home-cats-grid"></div>
     <a href="#" onclick="openAdmin();return false" class="admin-link">⚙ Administration</a>
     <div style="height:10px"></div>
@@ -1600,6 +1612,73 @@ function rentalCard(item, categoryId) {
   </div>`;
 }
 
+// ── WEATHER WIDGET (home screen) ──
+let WEATHER_DATA = null;
+const WEATHER_CACHE_KEY = 'ptb_weather_cache';
+const WEATHER_CACHE_MS = 30 * 60 * 1000;
+function wmoInfo(code) {
+  const map = {
+    0: ['☀️', 'Ciel dégagé', 'Clear sky'], 1: ['🌤️', 'Plutôt dégagé', 'Mostly clear'],
+    2: ['⛅', 'Partiellement nuageux', 'Partly cloudy'], 3: ['☁️', 'Couvert', 'Overcast'],
+    45: ['🌫️', 'Brumeux', 'Foggy'], 48: ['🌫️', 'Brumeux', 'Foggy'],
+    51: ['🌦️', 'Bruine légère', 'Light drizzle'], 53: ['🌦️', 'Bruine', 'Drizzle'], 55: ['🌦️', 'Bruine forte', 'Dense drizzle'],
+    56: ['🌦️', 'Bruine verglaçante', 'Freezing drizzle'], 57: ['🌦️', 'Bruine verglaçante', 'Freezing drizzle'],
+    61: ['🌧️', 'Pluie légère', 'Light rain'], 63: ['🌧️', 'Pluie', 'Rain'], 65: ['🌧️', 'Pluie forte', 'Heavy rain'],
+    66: ['🌧️', 'Pluie verglaçante', 'Freezing rain'], 67: ['🌧️', 'Pluie verglaçante', 'Freezing rain'],
+    71: ['🌨️', 'Neige légère', 'Light snow'], 73: ['🌨️', 'Neige', 'Snow'], 75: ['🌨️', 'Neige forte', 'Heavy snow'], 77: ['🌨️', 'Grains de neige', 'Snow grains'],
+    80: ['🌦️', 'Averses légères', 'Light showers'], 81: ['🌦️', 'Averses', 'Showers'], 82: ['⛈️', 'Averses violentes', 'Violent showers'],
+    85: ['🌨️', 'Averses de neige', 'Snow showers'], 86: ['🌨️', 'Averses de neige fortes', 'Heavy snow showers'],
+    95: ['⛈️', 'Orage', 'Thunderstorm'], 96: ['⛈️', 'Orage + grêle', 'Thunderstorm with hail'], 99: ['⛈️', 'Orage violent', 'Severe thunderstorm'],
+  };
+  return map[code] || ['🌡️', 'Météo', 'Weather'];
+}
+function paintWeather() {
+  const el = document.getElementById('weather-widget');
+  if (!el) return;
+  if (!WEATHER_DATA || !WEATHER_DATA.current) { el.innerHTML = ''; return; }
+  const w = WEATHER_DATA;
+  const info = wmoInfo(w.current.weather_code);
+  const dayNamesFr = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const dayNamesEn = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const times = (w.daily && w.daily.time) || [];
+  const days = times.slice(0, 5).map(function (dateStr, idx) {
+    const dt = new Date(dateStr + 'T12:00:00');
+    const dn = LANG === 'en' ? dayNamesEn[dt.getDay()] : dayNamesFr[dt.getDay()];
+    const dInfo = wmoInfo(w.daily.weather_code[idx]);
+    const max = Math.round(w.daily.temperature_2m_max[idx]);
+    const min = Math.round(w.daily.temperature_2m_min[idx]);
+    return '<div class="weather-day"><div class="weather-day-name">' + (idx === 0 ? T('Auj.', 'Today') : dn) + '</div><div class="weather-day-ico">' + dInfo[0] + '</div><div class="weather-day-temp">' + max + '° <small>' + min + '°</small></div></div>';
+  }).join('');
+  el.innerHTML = '<div class="weather-card"><div class="weather-today"><div class="weather-today-ico">' + info[0] + '</div><div><div class="weather-today-temp">' + Math.round(w.current.temperature_2m) + '°C</div><div class="weather-today-label">' + T(info[1], info[2]) + '</div></div></div><div class="weather-days">' + days + '</div></div>';
+}
+async function loadWeather() {
+  let cached = null;
+  try { cached = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || 'null'); } catch (e) {}
+  if (cached && cached.ts && Date.now() - cached.ts < WEATHER_CACHE_MS) {
+    WEATHER_DATA = cached.data;
+    paintWeather();
+    return;
+  }
+  try {
+    const lat = (D.settings && D.settings.villaLat) || -20.468287;
+    const lng = (D.settings && D.settings.villaLng) || 57.681682;
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lng + '&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=5';
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data && data.current) {
+      WEATHER_DATA = data;
+      try { localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ data: data, ts: Date.now() })); } catch (e) {}
+      paintWeather();
+    } else if (cached && cached.data) {
+      WEATHER_DATA = cached.data;
+      paintWeather();
+    }
+  } catch (e) {
+    // Offline or API down — fall back to a stale cache rather than showing nothing.
+    if (cached && cached.data) { WEATHER_DATA = cached.data; paintWeather(); }
+  }
+}
+
 // ── RENDER ALL ──
 function renderAll() {
   applySettings();
@@ -1632,6 +1711,7 @@ function renderAll() {
   });
   renderVideos();
   renderItins();
+  paintWeather();
   applyTranslations();
 }
 
@@ -3060,6 +3140,7 @@ setTimeout(hideBootScreen, 8000);
   if (!D.sliderImages || D.sliderImages.length === 0) D.sliderImages = BACKUP_DEFAULTS.sliderImages || [];
   await loadGuestData();
   await loadRatingSummary();
+  loadWeather();
   if (!LANG) {
     document.getElementById('lang-screen').style.display = 'flex';
   } else {
