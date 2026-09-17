@@ -2063,9 +2063,9 @@ function plateCardHTML(d, big) {
   }
   return '<div class="plat-card' + (big ? ' plat-card-big' : '') + '">' + photoHtml +
     '<div class="plat-body">' +
-    '<div class="plat-name t" data-fr="' + escAttr(d.nameFr || '') + '" data-en="' + escAttr(d.nameEn || d.nameFr || '') + '">' + escHtml(d.nameFr || '') + '</div>' +
+    '<div class="plat-name t" data-fr="' + escAttr(d.nameFr || '') + '" data-en="' + escAttr(d.nameEn || d.nameFr || '') + '">' + escHtml(T(d.nameFr, d.nameEn) || '') + '</div>' +
     '<div class="plat-rating">' + [1,2,3,4,5].map(function(n){return '<span class="rate-star' + (((D.ratings[d.id]||0)>=n)?' active':'') + '" data-id="' + d.id + '" onclick="setRating(\'' + d.id + '\',' + n + ')">★</span>';}).join('') + (RATING_SUMMARY[d.id] ? '<span class="rate-num">' + RATING_SUMMARY[d.id].avg.toFixed(1) + '</span><span class="rate-count">(' + RATING_SUMMARY[d.id].count + ')</span>' : '') + '</div>' +
-    '<div class="plat-desc t" data-fr="' + escAttr(d.descFr || '') + '" data-en="' + escAttr(d.descEn || '') + '">' + escHtml(d.descFr || '') + '</div>' + contactHtml +
+    '<div class="plat-desc t" data-fr="' + escAttr(d.descFr || '') + '" data-en="' + escAttr(d.descEn || '') + '">' + escHtml(T(d.descFr, d.descEn) || '') + '</div>' + contactHtml +
     '</div></div>';
 }
 function renderPlats() {
