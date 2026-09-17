@@ -18,7 +18,7 @@
 html,body{height:100%;height:100dvh;overflow:hidden;background:var(--outer-bg,#e0e8f0)}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
 :root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--accent2:#c1714a;--outer-bg:#e0e8f0;--nav-bg:var(--card);--video-accent:#e05a2b;--place-name-size:20px;--checkin-font-size:14px;--plats-name-size:17px;--plats-desc-size:13px;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
-#app-shell{position:fixed;inset:0;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
+#app-shell{position:fixed;top:0;left:0;right:0;bottom:0;height:100dvh;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
 
 @media(min-width:600px){
   #admin-app .admin-scroll{padding:20px 24px}
@@ -530,7 +530,13 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 // user force-quits and relaunches. Nudge a reflow (no hardcoded dimension, so it
 // can never "freeze" like the reverted fix above) whenever the page becomes visible again.
 (function () {
+  function setAppHeight() {
+    var shell = document.getElementById('app-shell');
+    if (shell) shell.style.height = window.innerHeight + 'px';
+  }
+  window.setAppHeight = setAppHeight;
   function nudgeReflow() {
+    setAppHeight();
     requestAnimationFrame(function () {
       var b = document.body;
       b.style.display = 'none';
@@ -538,9 +544,14 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       b.style.display = '';
       var shell = document.getElementById('app-shell');
       if (shell) { shell.style.position = 'static'; void shell.offsetHeight; shell.style.position = 'fixed'; }
+      setAppHeight();
+      requestAnimationFrame(setAppHeight);
     });
   }
 window.nudgeReflow = nudgeReflow;
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', function () { setTimeout(setAppHeight, 100); setTimeout(setAppHeight, 400); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
   // Cold launch from the home-screen icon: iOS can take a variable amount of time
