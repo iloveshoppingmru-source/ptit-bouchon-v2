@@ -348,6 +348,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .cta-em{background:var(--card);color:var(--text);border:1px solid var(--border)}.cta-ab{background:#ff5a5f;color:#fff}
 .map-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;text-decoration:none;padding:14px;border-radius:var(--r);margin:14px 18px 0;font-size:13px;font-weight:700}
 .alert-box{margin:14px 18px 0;background:#fff3e0;border:1px solid #ffcc02;border-radius:11px;padding:14px 16px;font-size:15px;color:#7a4900;display:flex;gap:10px;align-items:center;justify-content:center;text-align:center;font-weight:600}
+.scroll-hint{position:absolute;left:50%;bottom:88px;transform:translate(-50%,8px);display:flex;align-items:center;gap:6px;background:rgba(13,33,55,.85);color:#fff;font-size:12px;font-weight:600;padding:9px 16px;border-radius:50px;z-index:250;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.scroll-hint.show{opacity:1;transform:translate(-50%,0)}
+.scroll-hint-arrow{display:inline-block;animation:scrollHintBounce 1s ease-in-out infinite}
+@keyframes scrollHintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 .bottom-nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(6px + min(var(--safe),34px));z-index:200;width:100%}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 4px;cursor:pointer;color:#aac4e0;font-size:10.5px;font-weight:600;transition:color .2s,transform .15s;-webkit-user-select:none;user-select:none}
 .bnav-item:active{transform:scale(.85)}
@@ -888,6 +892,8 @@ window.nudgeReflow = nudgeReflow;
     <div class="scroll spb"><div id="plats-container"></div></div>
   </div>
 
+  <div id="scroll-hint" class="scroll-hint"><span class="scroll-hint-arrow">⌄</span><span class="t" data-fr="Faites défiler pour voir plus" data-en="Scroll for more">Faites défiler pour voir plus</span></div>
+
   <div class="bottom-nav">
     <div class="bnav-item active" onclick="goto('s-home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="t" data-fr="Accueil" data-en="Home">Accueil</span></div>
     <div class="bnav-item" onclick="goto('s-checkin')"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Check-in</span></div>
@@ -1357,10 +1363,19 @@ function back() { if (navStack.length > 1) navStack.pop(); go(navStack[navStack.
   }, { passive: true });
   document.addEventListener('touchcancel', function () { tracking = false; }, { passive: true });
 })();
+let __scrollHintTimer = null;
+function showScrollHint() {
+  const el = document.getElementById('scroll-hint');
+  if (!el) return;
+  clearTimeout(__scrollHintTimer);
+  el.classList.add('show');
+  __scrollHintTimer = setTimeout(function () { el.classList.remove('show'); }, 2000);
+}
 function homeTab(i) {
   document.querySelectorAll('.pill-item').forEach((p, j) => p.classList.toggle('active', j === i));
   [0,1,2,3,4].forEach(j => { const e = document.getElementById('tab-' + j); if (e) e.style.display = j === i ? 'block' : 'none'; });
   const home = document.getElementById('s-home'); if (home) home.scrollTop = 0;
+  if (i === 1 || i === 4) showScrollHint();
 }
 function updateBnav(id) {
   const m = { 's-home': 0, 's-checkin': 1, 's-restaurants': 2, 's-favs': 3, 's-urgences': 4 };
