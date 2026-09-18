@@ -196,7 +196,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .ph-brand{display:none}
 .ph-quote{display:none}
 .ph-toolbar{display:none}
-.back-bar{display:flex;align-items:center;padding:10px 16px;flex-shrink:0;background:var(--bg);position:sticky;top:0;z-index:50}
+.back-bar{display:flex;align-items:center;padding:10px 16px;flex-shrink:0;background:var(--bg)}
+.back-bar.stuck{position:fixed;z-index:90;box-shadow:0 3px 12px rgba(13,33,55,.1)}
+.back-bar-spacer{display:none}
+.back-bar-sentinel{height:0}
 .back-btn{display:flex;align-items:center;gap:6px;background:var(--card);border:none;color:var(--dark);padding:8px 16px 8px 12px;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-body);box-shadow:0 2px 10px rgba(13,33,55,.14);transition:transform .15s,box-shadow .15s}
 .back-btn:active{transform:scale(.97)}
 .back-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
@@ -1672,6 +1675,77 @@ async function loadWeather() {
     if (cached && cached.data) { WEATHER_DATA = cached.data; paintWeather(); }
   }
 }
+
+// ── STICKY BACK BAR (JS-driven) ──
+// CSS position:sticky silently fails to stick here on real iOS Safari, even
+// though it worked fine in desktop/Chromium testing: both html/body and #app
+// have overflow:hidden (needed for the app-shell layout), and WebKit has a
+// long-standing bug where sticky breaks inside a scrolling container if ANY
+// ancestor -- not just the scroll container itself -- has overflow:hidden,
+// even though the spec says it shouldn't matter. Chromium doesn't have this
+// bug, which is why it looked fine when tested here. Rebuilding the same
+// effect by hand with an IntersectionObserver sidesteps the bug entirely:
+// switch the bar to position:fixed once its sentinel scrolls above the top
+// of its screen, and back to normal flow when it scrolls back into view. A
+// spacer keeps the list from jumping when the bar leaves the flow.
+(function () {
+  function setupBackBarSticky() {
+    document.querySelectorAll('.back-bar').forEach(function (bar) {
+      if (bar.dataset.stickyInit) return;
+      bar.dataset.stickyInit = '1';
+      const screenEl = bar.closest('.screen');
+      if (!screenEl) return;
+      const spacer = document.createElement('div');
+      spacer.className = 'back-bar-spacer';
+      bar.parentNode.insertBefore(spacer, bar.nextSibling);
+      const sentinel = document.createElement('div');
+      sentinel.className = 'back-bar-sentinel';
+      bar.parentNode.insertBefore(sentinel, bar);
+
+      function applyFixedRect() {
+        const appEl = document.getElementById('app');
+        if (!appEl) return;
+        const r = appEl.getBoundingClientRect();
+        bar.style.left = r.left + 'px';
+        bar.style.width = r.width + 'px';
+      }
+
+      let stuck = false;
+      function stick() {
+        if (stuck) return;
+        stuck = true;
+        spacer.style.height = bar.offsetHeight + 'px';
+        spacer.style.display = 'block';
+        applyFixedRect();
+        bar.style.position = 'fixed';
+        bar.style.top = '0px';
+        bar.classList.add('stuck');
+      }
+      function unstick() {
+        if (!stuck) return;
+        stuck = false;
+        bar.style.position = '';
+        bar.style.top = '';
+        bar.style.left = '';
+        bar.style.width = '';
+        bar.classList.remove('stuck');
+        spacer.style.display = 'none';
+      }
+
+      const io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) unstick();
+          else if (entry.boundingClientRect.top < 0) stick();
+        });
+      }, { root: screenEl, threshold: 0 });
+      io.observe(sentinel);
+
+      window.addEventListener('resize', function () { if (stuck) applyFixedRect(); });
+    });
+  }
+  window.setupBackBarSticky = setupBackBarSticky;
+  setupBackBarSticky();
+})();
 
 // ── RENDER ALL ──
 function renderAll() {
