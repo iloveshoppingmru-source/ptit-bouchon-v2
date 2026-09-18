@@ -1718,7 +1718,7 @@ async function loadWeather() {
         spacer.style.display = 'block';
         applyFixedRect();
         bar.style.position = 'fixed';
-        bar.style.top = '0px';
+        bar.style.top = 'env(safe-area-inset-top, 0px)';
         bar.classList.add('stuck');
       }
       function unstick() {
