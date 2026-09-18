@@ -1369,7 +1369,7 @@ function showScrollHint() {
   if (!el) return;
   clearTimeout(__scrollHintTimer);
   el.classList.add('show');
-  __scrollHintTimer = setTimeout(function () { el.classList.remove('show'); }, 2000);
+  __scrollHintTimer = setTimeout(function () { el.classList.remove('show'); }, 5000);
 }
 function homeTab(i) {
   document.querySelectorAll('.pill-item').forEach((p, j) => p.classList.toggle('active', j === i));
