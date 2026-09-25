@@ -529,29 +529,24 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 </div>
 
 <script>
-// #app-shell uses CSS `height:100dvh` (dynamic viewport height), which always
-// exactly matches the live visible viewport on its own, continuously, including
-// right after an iOS PWA resumes from background — no JS height sync needed.
-// A real bug in a prior version: setAppHeight() below also wrote an inline
-// pixel height from window.innerHeight, which overrides the CSS (inline style
-// beats a stylesheet rule) and can freeze at a stale value — window.innerHeight
-// can be momentarily wrong for a beat right after resuming from background —
-// leaving a gap below the bottom nav until force-quit and relaunch. Fixed by
-// making setAppHeight() only ever clear a stale inline height, never set one.
-// The reflow nudge below is kept as an extra nudge for other iOS repaint glitches
-// (e.g. env(safe-area-*) not immediately repainting) but no longer touches height.
+// #app-shell has CSS `height:100dvh` as a baseline, but in practice iOS Safari
+// (standalone/home-screen PWA) does not always repaint it promptly after the
+// app resumes from background — the previous fix here assumed dvh alone was
+// enough and only cleared any stale inline height, but the gap kept recurring
+// on real iPhones, so that assumption was wrong for this case. Back to setting
+// an inline height in JS, but not the way the original (pre-dvh) version did:
+// that one read window.innerHeight once, which can report a stale value for a
+// beat right after resuming and then freezes since nothing re-reads it. This
+// version reads window.visualViewport.height, which iOS keeps live/current
+// (unlike innerHeight), and keeps re-reading it for a short settle window
+// after every resume-ish signal instead of trusting a single snapshot.
 (function () {
+  function liveVH() {
+    return (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  }
   function setAppHeight() {
-    // Intentionally does NOT set an inline height. CSS `height:100dvh` on
-    // #app-shell already tracks the live visible viewport continuously and
-    // correctly, including right after resuming from background. Setting an
-    // inline height here from window.innerHeight was the actual cause of the
-    // recurring gap: window.innerHeight can report a stale value for a beat
-    // after an iOS PWA resumes, and once written inline it permanently wins
-    // over the CSS (which self-corrects) until the next call — clear any
-    // stale inline height instead, as a safety net against old cached JS.
     var shell = document.getElementById('app-shell');
-    if (shell && shell.style.height) shell.style.height = '';
+    if (shell) shell.style.height = liveVH() + 'px';
   }
   window.setAppHeight = setAppHeight;
   function nudgeReflow() {
@@ -566,6 +561,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       setAppHeight();
       requestAnimationFrame(setAppHeight);
     });
+    // A single read right at the moment of resume can itself be mid-transition
+    // on iOS (chrome still animating in/out), so keep re-reading the live
+    // viewport height for a short settle window instead of trusting one snapshot.
+    [100, 250, 500, 800, 1200].forEach(function (ms) { setTimeout(setAppHeight, ms); });
   }
 window.nudgeReflow = nudgeReflow;
   setAppHeight();
@@ -573,6 +572,7 @@ window.nudgeReflow = nudgeReflow;
   window.addEventListener('orientationchange', function () { setTimeout(setAppHeight, 100); setTimeout(setAppHeight, 400); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
   window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
+  window.addEventListener('focus', nudgeReflow);
   // Cold launch from the home-screen icon: iOS can take a variable amount of time
   // to settle the real safe-area-inset-bottom (status bar / home indicator /
   // splash transition), so a single fixed-delay nudge isn't always enough — nudge
@@ -585,10 +585,12 @@ window.nudgeReflow = nudgeReflow;
   if (window.visualViewport) {
     var vvTimer = null;
     window.visualViewport.addEventListener('resize', function () {
+      setAppHeight();
       clearTimeout(vvTimer);
       vvTimer = setTimeout(nudgeReflow, 60);
     });
     window.visualViewport.addEventListener('scroll', function () {
+      setAppHeight();
       clearTimeout(vvTimer);
       vvTimer = setTimeout(nudgeReflow, 60);
     });
@@ -1387,7 +1389,20 @@ function updateBnav(id) {
 }
 
 // ── STATS ──
+// Lets the owner exclude their own device from analytics (admin > Paramètres),
+// per device via localStorage — doesn't touch real guests, and has to be
+// turned on separately on each of the owner's own devices.
+function isNoTrack() {
+  try { return localStorage.getItem('ptb_no_track') === '1'; } catch (e) { return false; }
+}
+function toggleNoTrack(checked) {
+  try {
+    if (checked) localStorage.setItem('ptb_no_track', '1');
+    else localStorage.removeItem('ptb_no_track');
+  } catch (e) {}
+}
 function trackVisit(id) {
+  if (isNoTrack()) return;
   D.stats = D.stats || { visits: {}, total: 0 };
   D.stats.visits[id] = (D.stats.visits[id] || 0) + 1;
   D.stats.total = (D.stats.total || 0) + 1;
@@ -1421,6 +1436,7 @@ function logVisitEvent(id) {
 }
 // Fire-and-forget item-level engagement tracking (Google Maps / phone / "Lire plus" clicks on place cards).
 function logItemClick(itemId, itemLabel, categoryId) {
+  if (isNoTrack()) return;
   (async () => {
     try {
       const info = await getVisitorInfo();
@@ -2345,6 +2361,13 @@ function markSaveError() {
 function aSettings(el) {
   const s = D.settings || {};
   el.innerHTML = `
+  <div class="a-sec"><h3>🙈 Confidentialité</h3>
+    <div class="a-field" style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <label style="margin:0">Ne pas suivre mes visites sur cet appareil</label>
+      <input type="checkbox" ${localStorage.getItem('ptb_no_track')==='1'?'checked':''} onchange="toggleNoTrack(this.checked)" style="width:20px;height:20px;flex-shrink:0">
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:6px 0 0">À activer ici et séparément sur ton téléphone — ça n'exclut que cet appareil précis, pas les vrais visiteurs.</p>
+  </div>
   <div class="a-sec"><h3>🏡 Informations générales</h3>
     <div class="a-field"><label>Nom propriété</label><input value="${s.propertyName || ''}" onchange="D.settings.propertyName=this.value;saveData()"></div>
     <div class="a-row2">
