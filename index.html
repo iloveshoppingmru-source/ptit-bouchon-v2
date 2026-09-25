@@ -545,8 +545,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   // explicit height) so the browser recomputes it natively against the real
   // current viewport on every layout — no JS-measured height value (which can
   // go stale on iOS after the app resumes from background) is ever assigned.
-  // The only job left for JS is to force WebKit to actually repaint/relayout
-  // the fixed-position shell when it fails to do so on its own after resume.
   function forceReflow() {
     requestAnimationFrame(function () {
       var b = document.body;
@@ -564,8 +562,6 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   window.nudgeReflow = forceReflow;
   window.addEventListener('resize', forceReflow);
   window.addEventListener('orientationchange', function () { setTimeout(forceReflow, 100); setTimeout(forceReflow, 400); });
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) forceReflow(); });
-  window.addEventListener('pageshow', function (e) { if (e.persisted) forceReflow(); });
   window.addEventListener('focus', forceReflow);
   // Cold launch from the home-screen icon: iOS can take a variable amount of time
   // to settle the real safe-area-inset-bottom (status bar / home indicator /
@@ -587,6 +583,31 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       vvTimer = setTimeout(forceReflow, 60);
     });
   }
+  // iOS can fully suspend the JS thread of a backgrounded standalone PWA. On
+  // resume, no amount of forced reflow can fix a stale *compositor* frame if
+  // the page never really "woke up" cleanly — the only 100% reliable fix for
+  // that class of bug is a real reload, which guarantees a fresh layout at
+  // the correct viewport. Short app-switches (a few seconds checking a
+  // notification) just get a reflow nudge so navigation state isn't lost;
+  // only a long time away triggers a full reload.
+  var RELOAD_AFTER_MS = 60000;
+  var hiddenAt = null;
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      hiddenAt = Date.now();
+    } else {
+      var elapsed = hiddenAt ? (Date.now() - hiddenAt) : 0;
+      hiddenAt = null;
+      if (elapsed > RELOAD_AFTER_MS) {
+        location.reload();
+        return;
+      }
+      forceReflow();
+    }
+  });
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) location.reload();
+  });
 })();
 </script>
 <div id="app-shell"><div id="app">
