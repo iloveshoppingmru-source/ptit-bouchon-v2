@@ -18,7 +18,7 @@
 html,body{height:100%;height:100dvh;overflow:hidden;background:var(--outer-bg,#e0e8f0)}
 body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)}
 :root{--blue:#1b6ca8;--dark:#1a3a5c;--bg:#f7f2e8;--card:#fffcf5;--text:#0d1f35;--muted:#6b8caa;--border:#e6dcc5;--accent:#1b6ca8;--accent2:#c1714a;--outer-bg:#e0e8f0;--nav-bg:var(--card);--video-accent:#e05a2b;--place-name-size:20px;--checkin-font-size:14px;--plats-name-size:17px;--plats-desc-size:13px;--r:16px;--safe:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);--font-head:'Cormorant Garamond','Playfair Display','Georgia','Times New Roman',serif;--font-body:-apple-system,'San Francisco','Helvetica Neue',Arial,sans-serif;--max:520px;--content-scale:1}
-#app-shell{position:fixed;top:0;left:0;right:0;bottom:0;height:100dvh;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
+#app-shell{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--outer-bg,#e0e8f0)}
 
 @media(min-width:600px){
   #admin-app .admin-scroll{padding:20px 24px}
@@ -541,16 +541,13 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 // (unlike innerHeight), and keeps re-reading it for a short settle window
 // after every resume-ish signal instead of trusting a single snapshot.
 (function () {
-  function liveVH() {
-    return (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-  }
-  function setAppHeight() {
-    var shell = document.getElementById('app-shell');
-    if (shell) shell.style.height = liveVH() + 'px';
-  }
-  window.setAppHeight = setAppHeight;
-  function nudgeReflow() {
-    setAppHeight();
+  // #app-shell is sized purely by CSS (top:0;left:0;right:0;bottom:0, no
+  // explicit height) so the browser recomputes it natively against the real
+  // current viewport on every layout — no JS-measured height value (which can
+  // go stale on iOS after the app resumes from background) is ever assigned.
+  // The only job left for JS is to force WebKit to actually repaint/relayout
+  // the fixed-position shell when it fails to do so on its own after resume.
+  function forceReflow() {
     requestAnimationFrame(function () {
       var b = document.body;
       b.style.display = 'none';
@@ -558,41 +555,36 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       b.style.display = '';
       var shell = document.getElementById('app-shell');
       if (shell) { shell.style.position = 'static'; void shell.offsetHeight; shell.style.position = 'fixed'; }
-      setAppHeight();
-      requestAnimationFrame(setAppHeight);
+      requestAnimationFrame(function () {
+        var shell2 = document.getElementById('app-shell');
+        if (shell2) void shell2.offsetHeight;
+      });
     });
-    // A single read right at the moment of resume can itself be mid-transition
-    // on iOS (chrome still animating in/out), so keep re-reading the live
-    // viewport height for a short settle window instead of trusting one snapshot.
-    [100, 250, 500, 800, 1200].forEach(function (ms) { setTimeout(setAppHeight, ms); });
   }
-window.nudgeReflow = nudgeReflow;
-  setAppHeight();
-  window.addEventListener('resize', setAppHeight);
-  window.addEventListener('orientationchange', function () { setTimeout(setAppHeight, 100); setTimeout(setAppHeight, 400); });
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) nudgeReflow(); });
-  window.addEventListener('pageshow', function (e) { if (e.persisted) nudgeReflow(); });
-  window.addEventListener('focus', nudgeReflow);
+  window.nudgeReflow = forceReflow;
+  window.addEventListener('resize', forceReflow);
+  window.addEventListener('orientationchange', function () { setTimeout(forceReflow, 100); setTimeout(forceReflow, 400); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) forceReflow(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) forceReflow(); });
+  window.addEventListener('focus', forceReflow);
   // Cold launch from the home-screen icon: iOS can take a variable amount of time
   // to settle the real safe-area-inset-bottom (status bar / home indicator /
-  // splash transition), so a single fixed-delay nudge isn't always enough — nudge
-  // repeatedly across the settling window instead of guessing one delay.
+  // splash transition), so nudge repeatedly across the settling window instead
+  // of guessing one delay.
   window.addEventListener('load', function () {
-    [50, 200, 500, 900, 1500, 2500].forEach(function (ms) { setTimeout(nudgeReflow, ms); });
+    [50, 200, 500, 900, 1500, 2500].forEach(function (ms) { setTimeout(forceReflow, ms); });
   });
   // Most direct signal iOS gives that its chrome/geometry actually changed —
   // react to it whenever it fires, on top of the timed guesses above.
   if (window.visualViewport) {
     var vvTimer = null;
     window.visualViewport.addEventListener('resize', function () {
-      setAppHeight();
       clearTimeout(vvTimer);
-      vvTimer = setTimeout(nudgeReflow, 60);
+      vvTimer = setTimeout(forceReflow, 60);
     });
     window.visualViewport.addEventListener('scroll', function () {
-      setAppHeight();
       clearTimeout(vvTimer);
-      vvTimer = setTimeout(nudgeReflow, 60);
+      vvTimer = setTimeout(forceReflow, 60);
     });
   }
 })();
