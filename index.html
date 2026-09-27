@@ -355,7 +355,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .scroll-hint.show{opacity:1;transform:translate(-50%,0)}
 .scroll-hint-arrow{display:inline-block;animation:scrollHintBounce 1s ease-in-out infinite}
 @keyframes scrollHintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-.bottom-nav{position:absolute;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(6px + min(var(--safe),34px));z-index:200;width:100%}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(6px + min(var(--safe),34px));z-index:200;width:100%}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 4px;cursor:pointer;color:#aac4e0;font-size:10.5px;font-weight:600;transition:color .2s,transform .15s;-webkit-user-select:none;user-select:none}
 .bnav-item:active{transform:scale(.85)}
 .bnav-item.active{color:var(--dark,#0a1628)}
@@ -545,7 +545,24 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   // explicit height) so the browser recomputes it natively against the real
   // current viewport on every layout — no JS-measured height value (which can
   // go stale on iOS after the app resumes from background) is ever assigned.
+  // The bottom nav is anchored with position:fixed directly to the real
+  // device viewport (not to #app's own box), so its bottom edge can never
+  // detach from the true bottom of the screen even if #app/#app-shell end up
+  // mis-sized. On phones #app already spans the full width so this is a
+  // no-op there; on wider/centered layouts we mirror #app's rect so the nav
+  // still lines up under the centered card instead of stretching edge to edge.
+  function syncBottomNavRect() {
+    var nav = document.querySelector('.bottom-nav');
+    var appEl = document.getElementById('app');
+    if (!nav || !appEl) return;
+    var r = appEl.getBoundingClientRect();
+    nav.style.left = r.left + 'px';
+    nav.style.width = r.width + 'px';
+  }
+  window.syncBottomNavRect = syncBottomNavRect;
+
   function forceReflow() {
+    syncBottomNavRect();
     requestAnimationFrame(function () {
       var b = document.body;
       b.style.display = 'none';
@@ -553,12 +570,15 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       b.style.display = '';
       var shell = document.getElementById('app-shell');
       if (shell) { shell.style.position = 'static'; void shell.offsetHeight; shell.style.position = 'fixed'; }
+      syncBottomNavRect();
       requestAnimationFrame(function () {
         var shell2 = document.getElementById('app-shell');
         if (shell2) void shell2.offsetHeight;
+        syncBottomNavRect();
       });
     });
   }
+  syncBottomNavRect();
   window.nudgeReflow = forceReflow;
   window.addEventListener('resize', forceReflow);
   window.addEventListener('orientationchange', function () { setTimeout(forceReflow, 100); setTimeout(forceReflow, 400); });
