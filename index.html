@@ -355,7 +355,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
 .scroll-hint.show{opacity:1;transform:translate(-50%,0)}
 .scroll-hint-arrow{display:inline-block;animation:scrollHintBounce 1s ease-in-out infinite}
 @keyframes scrollHintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(6px + min(var(--safe),34px));z-index:200;width:100%}
+.bottom-nav{position:fixed;bottom:0;left:max(0px,calc((100% - var(--max)) / 2));right:auto;background:var(--card);border-top:1.5px solid var(--border);display:flex;padding:6px 0 calc(6px + min(var(--safe),34px));z-index:200;width:min(100%,var(--max))}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 4px;cursor:pointer;color:#aac4e0;font-size:10.5px;font-weight:600;transition:color .2s,transform .15s;-webkit-user-select:none;user-select:none}
 .bnav-item:active{transform:scale(.85)}
 .bnav-item.active{color:var(--dark,#0a1628)}
@@ -579,6 +579,10 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
     });
   }
   syncBottomNavRect();
+  // This script runs before the nav markup exists, so the call above is a
+  // no-op on first load; sync again as soon as the DOM is parsed. (The CSS
+  // already centers the nav under #app, this is just a safety net.)
+  document.addEventListener('DOMContentLoaded', syncBottomNavRect);
   window.nudgeReflow = forceReflow;
   window.addEventListener('resize', forceReflow);
   window.addEventListener('orientationchange', function () { setTimeout(forceReflow, 100); setTimeout(forceReflow, 400); });
@@ -615,6 +619,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       hiddenAt = Date.now();
+      if (window.saveNavState) window.saveNavState();
     } else {
       var elapsed = hiddenAt ? (Date.now() - hiddenAt) : 0;
       hiddenAt = null;
@@ -625,6 +630,7 @@ body{font-family:var(--font-body,'DM Sans',sans-serif);color:var(--text,#0d1f35)
       forceReflow();
     }
   });
+  window.addEventListener('pagehide', function () { if (window.saveNavState) window.saveNavState(); });
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) location.reload();
   });
@@ -1379,6 +1385,53 @@ function goto(id) {
   if (id === 's-home') homeTab(0);
 }
 function back() { if (navStack.length > 1) navStack.pop(); go(navStack[navStack.length - 1]); }
+// ── RESTORE SCREEN AFTER RESUME ──
+// The resume fix reloads the page after >60s in background (and iOS may kill
+// the PWA anyway). Remember where the guest was — screen stack, home tab and
+// scroll position — so they land back on the same spot instead of the home
+// screen. Only restored if recent, so opening the app the next day still
+// starts on the home screen.
+const NAV_STATE_KEY = 'ptb_nav_state';
+const NAV_STATE_MAX_AGE = 30 * 60 * 1000;
+// Depending on the screen, either the screen itself or its inner .scroll list
+// is the element that scrolls, so remember both.
+function scrollersOf(el) { if (!el) return []; const inner = el.querySelector('.scroll'); return inner ? [el, inner] : [el]; }
+function saveNavState() {
+  try {
+    const id = navStack[navStack.length - 1];
+    const scroll = scrollersOf(document.getElementById(id)).map(e => e.scrollTop);
+    const pills = Array.from(document.querySelectorAll('.pill-item'));
+    const tab = Math.max(0, pills.findIndex(p => p.classList.contains('active')));
+    localStorage.setItem(NAV_STATE_KEY, JSON.stringify({
+      stack: navStack, tab: tab, scroll: scroll, ts: Date.now()
+    }));
+  } catch (e) {}
+}
+window.saveNavState = saveNavState;
+function restoreNavState() {
+  let st = null;
+  try { st = JSON.parse(localStorage.getItem(NAV_STATE_KEY) || 'null'); localStorage.removeItem(NAV_STATE_KEY); } catch (e) {}
+  if (!st || !Array.isArray(st.stack) || Date.now() - (st.ts || 0) > NAV_STATE_MAX_AGE) return;
+  const stack = st.stack.filter(id => document.getElementById(id));
+  if (!stack.length) return;
+  const id = stack[stack.length - 1];
+  // Same as go(), minus stats tracking (not a new visit) and scroll reset.
+  navStack = stack;
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.id === id));
+  updateBnav(id);
+  if (id === 's-favs') renderFavs();
+  if (id === 's-plats') renderPlats();
+  const tab = st.tab | 0;
+  document.querySelectorAll('.pill-item').forEach((p, j) => p.classList.toggle('active', j === tab));
+  [0,1,2,3,4].forEach(j => { const e = document.getElementById('tab-' + j); if (e) e.style.display = j === tab ? 'block' : 'none'; });
+  const els = scrollersOf(document.getElementById(id));
+  const ys = Array.isArray(st.scroll) ? st.scroll : [];
+  const applyScroll = () => els.forEach((e, k) => { if (ys[k]) e.scrollTop = ys[k] | 0; });
+  // Images above may still be loading and shift the layout; re-apply a bit later.
+  requestAnimationFrame(applyScroll);
+  setTimeout(applyScroll, 400);
+  nudgeReflow();
+}
 // ── SWIPE BACK (edge swipe left-to-right, like iOS native back gesture) ──
 (function () {
   let startX = 0, startY = 0, tracking = false;
@@ -3271,6 +3324,7 @@ setTimeout(hideBootScreen, 8000);
   } else {
     document.getElementById('lang-screen').style.display = 'none';
     renderAll();
+    restoreNavState();
   }
   hideBootScreen();
 })();
